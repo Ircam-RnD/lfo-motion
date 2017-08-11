@@ -1,6 +1,7 @@
 import 'source-map-support/register';
 import http from 'http';
 import uws from 'uws';
+import chalk from 'chalk';
 import connect from 'connect';
 import connectRoute from 'connect-route';
 import path from 'path';
@@ -46,22 +47,18 @@ portfinder.getPortPromise()
     console.log('-----------------------------------------------');
 
     const server = http.createServer(app);
-    server.listen(port, () => console.log(`server started: http://127.0.0.1:${port}`));
+    server.listen(port, () => console.log(chalk.cyan(`server started: http://127.0.0.1:${port}`)));
 
     // lfo routing
-    const logger = new lfo.sink.Logger({
-      data: true,
-      time: false,
-    });
-
-    console.log('socket receive on ports: 500x');
-    console.log('socket send on ports:    501x');
+    console.log(chalk.grey('socket receive on ports: 500x'));
+    console.log(chalk.grey('socket send on ports:    501x'));
 
     // pipe phone to desktop client
-    const phoneSocketReceive = new lfo.source.SocketReceive({ port: 5000 });
-    const phoneSocketSend = new lfo.sink.SocketSend({ port: 5010 });
+    const socketReceive = new lfo.source.SocketReceive({ port: 5000 });
+    const socketSend = new lfo.sink.SocketSend({ port: 5010 });
+    const logger = new lfo.sink.Logger({ data: false, time: true });
 
-    phoneSocketReceive.connect(phoneSocketSend);
-    // phoneSocketReceive.connect(logger);
+    socketReceive.connect(socketSend);
+    // socketReceive.connect(logger);
   })
   .catch(err => console.error(err.stack));

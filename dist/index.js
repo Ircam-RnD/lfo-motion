@@ -4,41 +4,25 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _GmmDecoderLfo = require('./GmmDecoderLfo');
+var _namespace = require('./operator/_namespace');
 
-Object.defineProperty(exports, 'GmmDecoderLfo', {
+Object.defineProperty(exports, 'operator', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_GmmDecoderLfo).default;
+    return _interopRequireDefault(_namespace).default;
   }
 });
 
-var _HhmmDecoderLfo = require('./HhmmDecoderLfo');
+var _namespace2 = require('./source/_namespace');
 
-Object.defineProperty(exports, 'HhmmDecoderLfo', {
+Object.defineProperty(exports, 'source', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(_HhmmDecoderLfo).default;
-  }
-});
-
-var _PhraseRecorderLfo = require('./PhraseRecorderLfo');
-
-Object.defineProperty(exports, 'PhraseRecorderLfo', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_PhraseRecorderLfo).default;
-  }
-});
-
-var _XmmDecoderLfo = require('./XmmDecoderLfo');
-
-Object.defineProperty(exports, 'XmmDecoderLfo', {
-  enumerable: true,
-  get: function get() {
-    return _interopRequireDefault(_XmmDecoderLfo).default;
+    return _interopRequireDefault(_namespace2).default;
   }
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInplcm8tY3Jvc3NpbmctcmF0ZS5qcyJdLCJuYW1lcyI6WyJkZWZhdWx0Il0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztrREFNU0EsTzs7Ozs7Ozs7O21EQUNBQSxPOzs7Ozs7Ozs7c0RBQ0FBLE87Ozs7Ozs7OztrREFDQUEsTyIsImZpbGUiOiJ6ZXJvLWNyb3NzaW5nLXJhdGUuanMiLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIENhbGxiYWNrIGhhbmRsaW5nIHRoZSBmdWxsIGZpbHRlcmluZyByZXN1bHRzLlxuICogQGNhbGxiYWNrIGZpbHRlckNhbGxiYWNrXG4gKiBAcGFyYW0ge09iamVjdH0gcmVzIC0gQW4gb2JqZWN0IGNvbnRhaW5pbmcgdGhlIGZpbHRlcmluZyByZXN1bHRzLlxuICovXG5cbmV4cG9ydCB7IGRlZmF1bHQgYXMgR21tRGVjb2RlckxmbyB9IGZyb20gJy4vR21tRGVjb2Rlckxmbyc7XG5leHBvcnQgeyBkZWZhdWx0IGFzIEhobW1EZWNvZGVyTGZvIH0gZnJvbSAnLi9IaG1tRGVjb2Rlckxmbyc7XG5leHBvcnQgeyBkZWZhdWx0IGFzIFBocmFzZVJlY29yZGVyTGZvIH0gZnJvbSAnLi9QaHJhc2VSZWNvcmRlckxmbyc7XG5leHBvcnQgeyBkZWZhdWx0IGFzIFhtbURlY29kZXJMZm8gfSBmcm9tICcuL1htbURlY29kZXJMZm8nOyJdfQ==
+
+var version = exports.version = '%version%';
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIl9uYW1lc3BhY2UuanMiXSwibmFtZXMiOlsiZGVmYXVsdCIsInZlcnNpb24iXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OzhDQUVTQSxPOzs7Ozs7Ozs7K0NBQ0FBLE87Ozs7OztBQUhGLElBQU1DLDRCQUFVLFdBQWhCIiwiZmlsZSI6Il9uYW1lc3BhY2UuanMiLCJzb3VyY2VzQ29udGVudCI6WyJleHBvcnQgY29uc3QgdmVyc2lvbiA9ICcldmVyc2lvbiUnO1xuXG5leHBvcnQgeyBkZWZhdWx0IGFzIG9wZXJhdG9yIH0gZnJvbSAnLi9vcGVyYXRvci9fbmFtZXNwYWNlJztcbmV4cG9ydCB7IGRlZmF1bHQgYXMgc291cmNlIH0gZnJvbSAnLi9zb3VyY2UvX25hbWVzcGFjZSc7XG4iXX0=
