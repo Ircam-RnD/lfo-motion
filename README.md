@@ -1,15 +1,13 @@
 # lfo-motion
 
-### `waves-lfo` modules for movement analysis
+> `lfo` modules dedicated to sensors capture, filtering and movement analysis
+> _see [waves-lfo](https://github.com/wavesjs/waves-lfo)_
 
-See [waves-lfo](https://github.com/wavesjs/waves-lfo) from the wavesjs library
+## Installation
 
-#### installation :
+The final application must import the `lfo-motion` modules (aka the plugin) _and_ the `waves-lfo` library
 
-The application consuming the `xmm-lfo` module (aka plugin) must also import the `waves-lfo` library
-
-`npm install [--save] wavesjs/waves-lfo`  
-
-Then
-
-`npm install [--save] ircam-rnd/lfo-motion`
+```
+npm install [--save --save-exact] wavesjs/waves-lfo
+npm install [--save --save-exact] ircam-rnd/lfo-motion
+```
