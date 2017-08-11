@@ -14,38 +14,52 @@
     <div id="wrapper">
 
       <div class="inner-wrapper">
-        <h1>Mobile</h1>
+        <h1>Raw Sensors</h1>
 
-        <h2>x axis</h2>
-        <canvas id="x-display"></canvas>
+        <h2>x acc / pitch</h2>
+        <canvas id="raw-x-display"></canvas>
 
-        <h2>y axis</h2>
-        <canvas id="y-display"></canvas>
+        <h2>y axis / roll</h2>
+        <canvas id="raw-y-display"></canvas>
 
-        <h2>z axis</h2>
-        <canvas id="z-display"></canvas>
+        <h2>z axis / yaw</h2>
+        <canvas id="raw-z-display"></canvas>
       </div>
 
       <div class="inner-wrapper">
-        <h1>RioT</h1>
+        <h1>Resampled Sensors (50Hz)</h1>
+
+        <h2>x acc / pitch</h2>
+        <canvas id="resampled-x-display"></canvas>
+
+        <h2>y axis / roll</h2>
+        <canvas id="resampled-y-display"></canvas>
+
+        <h2>z axis / yaw</h2>
+        <canvas id="resampled-z-display"></canvas>
+      </div>
+
+      <div class="inner-wrapper">
+        <h1>Resampled Sensors</h1>
 
         <h2>x axis</h2>
-        <canvas id="riot-x-display"></canvas>
+        <canvas id="filtered-x-display"></canvas>
 
         <h2>y axis</h2>
-        <canvas id="riot-y-display"></canvas>
+        <canvas id="filtered-y-display"></canvas>
 
         <h2>z axis</h2>
-        <canvas id="riot-z-display"></canvas>
+        <canvas id="filtered-z-display"></canvas>
       </div>
+
 
     </div>
 
-    <p>
+    <!-- <p>
 - <span class="steelblue">blue</span>: filter out
 - <span class="green">green</span>: raw acceleremeter
 - <span class="orange">orange</span>: raw gyroscope
-    </p>
+    </p> -->
     <% } else if (name === 'mobile') { %>
       <h1>Sensor Client</h1>
     <% } %>
