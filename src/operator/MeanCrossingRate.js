@@ -1,5 +1,5 @@
 import { BaseLfo } from 'waves-lfo/core';
-import { _MeanCrossingRate } from '_MeanCrossingRate';
+import _MeanCrossingRate from './_MeanCrossingRate';
 
 // motion-input indices :
 // 0,1,2 -> accelerationIncludingGravity

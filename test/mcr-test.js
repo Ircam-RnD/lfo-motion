@@ -1,5 +1,5 @@
 import test from 'tape';
-import { _MeanCrossingRate } from '../src/operator/_MeanCrossingRate';
+import _MeanCrossingRate from '../src/operator/_MeanCrossingRate';
 
 /*
 test('motion features', (t) => {
@@ -28,8 +28,8 @@ test('mean crossing rate', (t) => {
 
   crossings = mcr.process([ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 ]);
   //console.log(JSON.stringify(crossings));
-  m.equal(crossings['frequency'], 1);
-  m.equal(crossings['periodicity'], 1);
+  t.equal(crossings['frequency'], 1);
+  t.equal(crossings['periodicity'], 1);
 
   crossings = mcr.process([ 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, -1 ]);
   //console.log(JSON.stringify(crossings));

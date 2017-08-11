@@ -1,5 +1,3 @@
-/** @todo : add integrated buffer here for optimized statistics computing */
-
 const defaults = {
   noiseThreshold: 0.1,
   // this is used only with internal circular buffer (fed sample by sample)
@@ -39,7 +37,7 @@ class MeanCrossingRate {
       this.hopSize = cfg.hopSize;
     }
 
-    if (ctg.sampleRate) {
+    if (cfg.sampleRate) {
       this.sampleRate = cfg.sampleRate;
       // this.maxFreq = this.sampleRate / 2;
     }

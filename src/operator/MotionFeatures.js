@@ -1,5 +1,5 @@
 import { BaseLfo } from 'waves-lfo/core';
-import { _MotionFeatures } from './_MotionFeatures';
+import _MotionFeatures from './_MotionFeatures';
 
 // motion-input indices :
 // 0,1,2 -> accelerationIncludingGravity
@@ -10,7 +10,7 @@ import { _MotionFeatures } from './_MotionFeatures';
 // indices for acc + gyro are 0, 1, 2, 3, 4, 5 (see below)
 
 const definitions = {
-  descriptors: {
+  features: {
     type: 'any',
     default: [
       'accRaw',
@@ -48,7 +48,7 @@ export default class MotionFeatures extends BaseLfo {
     super(definitions, options);
 
     this._features = new _MotionFeatures({
-      descriptors: this.params.get('descriptors'),
+      features: this.params.get('features'),
       spinThresh: 0.5, // original : 200
       stillThresh: 2, // original : 5000
       accIntensityParam1: 0.8,
@@ -56,7 +56,7 @@ export default class MotionFeatures extends BaseLfo {
     });
     // this._callback = this.params.get('callback');
 
-    this._descriptorsInfo = {
+    this._featuresInfo = {
       accRaw: [ 'x', 'y', 'z' ],
       gyrRaw: [ 'x', 'y', 'z' ],
       accIntensity: [ 'norm', 'x', 'y', 'z' ],
@@ -81,11 +81,11 @@ export default class MotionFeatures extends BaseLfo {
   processStreamParams(prevStreamParams = {}) {
     this.prepareStreamParams(prevStreamParams);
 
-    const descriptors = this.params.get('descriptors');
+    const features = this.params.get('features');
 
     let len = 0;
-    for (let d of descriptors) {
-      len += this._descriptorsInfo[d].length;
+    for (let d of features) {
+      len += this._featuresInfo[d].length;
     }
 
     this.streamParams.frameSize = len;
@@ -95,7 +95,7 @@ export default class MotionFeatures extends BaseLfo {
 
   /** @private */
   processVector(frame) {
-    const descriptors = this.params.get('descriptors');
+    const features = this.params.get('features');
     const callback = this.params.get('callback');
     const inData = frame.data;
     const outData = this.frame.data;
@@ -117,8 +117,8 @@ export default class MotionFeatures extends BaseLfo {
     const values = this._features.update();
 
     let i = 0;
-    for (let d of descriptors) {
-      const subDesc = this._descriptorsInfo[d]; // the array of the current descriptor's dimensions names
+    for (let d of features) {
+      const subDesc = this._featuresInfo[d]; // the array of the current descriptor's dimensions names
       const subValues = values[d];
 
       for (let subd of subDesc) {

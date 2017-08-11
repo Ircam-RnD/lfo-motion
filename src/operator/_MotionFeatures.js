@@ -37,20 +37,20 @@ const perfNow = getTimeFunction();
 /*
  * // es5 with browserify :
  * var motionFeatures = require('motion-features');
- * var mf = new motionFeatures.MotionFeatures({ descriptors: ['accIntensity', 'kick'] });
+ * var mf = new motionFeatures.MotionFeatures({ features: ['accIntensity', 'kick'] });
  *
  * // loading from a "script" tag :
- * var mf = new motionFeatures.MotionFeatures({ descriptors: ['accIntensity', 'kick'] });
+ * var mf = new motionFeatures.MotionFeatures({ features: ['accIntensity', 'kick'] });
  */
 
 
 /**
- * Class computing the descriptors from accelerometer and gyroscope data.
+ * Class computing the features from accelerometer and gyroscope data.
  * <br />
  * es6 + browserify example :
  * ```JavaScript
  * import { MotionFeatures } from 'motion-features'; 
- * const mf = new MotionFeatures({ descriptors: ['accIntensity', 'kick'] });
+ * const mf = new MotionFeatures({ features: ['accIntensity', 'kick'] });
  *
  * // then, on each motion event :
  * mf.setAccelerometer(x, y, z);
@@ -67,7 +67,7 @@ class MotionFeatures {
 
   /**
    * @param {Object} initObject - object containing an array of the
-   * required descriptors and some variables used to compute the descriptors
+   * required features and some variables used to compute the features
    * that you might want to change (for example if the browser is chrome you
    * might want to set `gyrIsInDegrees` to false because it's the case on some
    * versions, or you might want to change some thresholds).
@@ -77,7 +77,7 @@ class MotionFeatures {
    */
   constructor(options = {}) {
     const defaults = {
-      descriptors: [
+      features: [
         'accRaw',
         'gyrRaw',
         'accIntensity',
@@ -127,7 +127,7 @@ class MotionFeatures {
     };
 
     this._params = Object.assign({}, defaults, options);
-    //console.log(this._params.descriptors);
+    //console.log(this._params.features);
 
     this._methods = {
       accRaw: this._updateAccRaw.bind(this),
@@ -236,8 +236,8 @@ class MotionFeatures {
     //console.log(this._loopIndexPeriod);
     this._loopIndex = 0;
 
-    const hasGyrZcr = this._params.descriptors.indexOf('gyrZcr') > -1;
-    const hasAccZcr = this._params.descriptors.indexOf('accZcr') > -1;
+    const hasGyrZcr = this._params.features.indexOf('gyrZcr') > -1;
+    const hasAccZcr = this._params.features.indexOf('accZcr') > -1;
 
     if (hasGyrZcr) {
       this._gyrZcr = new MeanCrossingRate({
@@ -259,12 +259,12 @@ class MotionFeatures {
   //========== interface =========//
 
   /**
-   * Update configuration parameters (except descriptors list)
+   * Update configuration parameters (except features list)
    * @param {Object} params - a subset of the constructor's parameters
    */
   updateParams(params = {}) {
     for (let key in params) {
-      if (key !== 'descriptors') {
+      if (key !== 'features') {
         this._params[key] = params[key];
       }
     }
@@ -381,10 +381,10 @@ class MotionFeatures {
    */
 
   /**
-   * Triggers computation of the descriptors from the current sensor values and
+   * Triggers computation of the features from the current sensor values and
    * pass the results to a callback
-   * @param {featuresCallback} callback - The callback handling the last computed descriptors
-   * @returns {features} features - Return these computed descriptors anyway
+   * @param {featuresCallback} callback - The callback handling the last computed features
+   * @returns {features} features - Return these computed features anyway
    */
   update(callback = null) {
     // DEAL WITH this._elapsedTime
@@ -399,7 +399,7 @@ class MotionFeatures {
     let res = null;
     try {
       res = {};
-      for (let key of this._params.descriptors) {
+      for (let key of this._params.features) {
         if (this._methods[key]) {
           this._methods[key](res);
         }
@@ -417,7 +417,7 @@ class MotionFeatures {
   }
 
   //==========================================================================//
-  //====================== specific descriptors computing ====================//
+  //======================== specific features computing =====================//
   //==========================================================================//
 
   /** @private */
