@@ -4,7 +4,8 @@ const defaults = {
   noiseThreshold: 0.1,
   // this is used only with internal circular buffer (fed sample by sample)
   frameSize: 50,
-  hopSize: 5
+  hopSize: 5,
+  sampleRate: null,
 };
 
 class MeanCrossingRate {
@@ -36,6 +37,11 @@ class MeanCrossingRate {
 
     if (cfg.hopSize) {
       this.hopSize = cfg.hopSize;
+    }
+
+    if (ctg.sampleRate) {
+      this.sampleRate = cfg.sampleRate;
+      // this.maxFreq = this.sampleRate / 2;
     }
 
     this.inputBuffer = new Array(this.frameSize);
@@ -87,8 +93,12 @@ class MeanCrossingRate {
 
     // this one is working with two direction crossings detection version
     this.frequency = this.crossings.length / (this.inputFrame.length - 1); // beware of division by zero
+    // if sampleRate is specified, translate normalized frequency to Hertz :
+    if (this.sampleRate) {
+      this.frequency *= Math.floo(this.sampleRate / 2);
+    }
     
-    if(this.crossings.length > 2) {
+    if (this.crossings.length > 2) {
       //let clip = this.periodStdDev * 5 / this.inputFrame.length;
       //clip = Math.min(clip, 1.);
       //this.periodicity = 1.0 - Math.sqrt(clip);
@@ -114,13 +124,14 @@ class MeanCrossingRate {
     min = max = this.inputFrame[0];
     this.mean = 0;
     this.magnitude = 0;
-    for(let i in this.inputFrame) {
+    for (let i in this.inputFrame) {
       let val = this.inputFrame[i];
       this.magnitude += val * val;
       this.mean += val;
-      if(val > max) {
+
+      if (val > max) {
         max = val;
-      } else if(val < min) {
+      } else if (val < min) {
         min = val;
       }
     }
