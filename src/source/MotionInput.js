@@ -4,11 +4,31 @@ import { BaseLfo, SourceMixin } from 'waves-lfo/core';
 const definitions = {};
 
 /**
+ * Module that wraps the [motion-input](https://github.com/collective-soundworks/motion-input)
+ * library and creates a stream of vectors from the accelerometers and gyroscope.
  *
+ * Output is defined in the same order, unit and directions as in the
+ * [DeviceMotion specification](https://w3c.github.io/deviceorientation/spec-source-orientation.html):
  *
+ * * 0 - accelerometer X
+ * * 1 - accelerometer Y
+ * * 2 - accelerometer Z
+ * * 3 - gyro around Z (alpha - yaw)
+ * * 4 - gyro around X (beta - pitch)
+ * * 5 - gyro around Y (gamma - roll)
  *
+ * @example
+ * import * as lfo from 'waves-lfo';
+ * import * as lfoMotion from 'lfo-motion';
  *
+ * const motionInput = new lfoMotion.source.MotionInput();
+ * const logger = new lfo.sink.Logger({ time: false, data: true });
  *
+ * motionInput.connect(logger);
+ *
+ * motionInput.init()
+ *   .then(() => motionInput.start())
+ *   .catch(err => console.log(err.stack));
  */
 class MotionInput extends SourceMixin(BaseLfo) {
   constructor(options = {}) {
