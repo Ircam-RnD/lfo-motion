@@ -1,7 +1,6 @@
-// port of orientation.cpp Max object
 import { BaseLfo } from 'waves-lfo/core';
 
-
+// port of orientation.cpp Max object
 const abs = Math.abs;
 const atan2 = Math.atan2;
 const cos = Math.cos;
@@ -14,7 +13,7 @@ const toDeg = 180 / Math.PI;
 const toRad = Math.PI / 180;
 
 function normalize(v) {
-  const mag = sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  const mag = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
   v[0] /= mag;
   v[1] /= mag;
   v[2] /= mag;
@@ -28,10 +27,24 @@ const parameters = {
     min: 0,
     max: 1,
     step: 0.01,
-    default: 0.98,
+    default: 0.9,
   },
 };
 
+/**
+ * Filter that integrate gyrosscope and acceleration in order to remove noise
+ * from accelerometers data while keeping a good reactivity.
+ * The filter ouputs a normalized projection vector.
+ * Be aware that the out of the filter invert the x and z in regard of the
+ * device motion specification. This is done for compatibility with the R-ioT
+ * sensor.
+ *
+ * @param {Object} options - Override default options
+ * @param {Number} k - Ratio between the accelerometers and gyroscope.
+ *  1 means gyroscope only
+ *  0 mean accelerometers only (this is equivalent to a lowpass filter)
+ *
+ */
 class Orientation extends BaseLfo {
   constructor(options) {
     super(parameters, options);
