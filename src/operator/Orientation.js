@@ -50,6 +50,7 @@ class Orientation extends BaseLfo {
     super(parameters, options);
   }
 
+  /** @private */
   processStreamParams(prevStreamParams) {
     this.prepareStreamParams(prevStreamParams);
 
@@ -74,6 +75,7 @@ class Orientation extends BaseLfo {
     this.propagateStreamParams();
   }
 
+  /** @private */
   processVector(frame) {
     const time = frame.time;
     const input = frame.data;

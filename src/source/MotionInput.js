@@ -33,12 +33,15 @@ const definitions = {};
 class MotionInput extends SourceMixin(BaseLfo) {
   constructor(options = {}) {
     super(definitions, options);
+
+    this._accListener = this._accListener.bind(this);
+    this._gyroListener = this._gyroListener.bind(this);
+    this._accOnlyListener = this._accOnlyListener.bind(this);
   }
 
+  /** @private */
   initModule() {
     const nextPromises = super.initModule();
-    // console.log(nextPromises);
-    // return;
 
     const promise = new Promise((resolve, reject) => {
       motionInput
@@ -56,6 +59,7 @@ class MotionInput extends SourceMixin(BaseLfo) {
     return Promise.all([nextPromises, promise]);
   }
 
+  /** @private */
   processStreamParams() {
     this.streamParams.frameType = 'vector';
     this.streamParams.frameSize = 6;
@@ -74,63 +78,84 @@ class MotionInput extends SourceMixin(BaseLfo) {
     this.propagateStreamParams();
   }
 
+  /**
+   * Start the stream.
+   */
+  start() {
+    this._startTime = performance.now();
 
-  start(startTime = null) {
     if (this.initialized === false) {
       if (this.initPromise === null) // init has not yet been called
         this.initPromise = this.init();
 
-      return this.initPromise.then(() => this.start(startTime));
+      return this.initPromise.then(() => this.start(this._startTime));
     }
 
     const frame = this.frame;
-    const accelerationIncludingGravity = this.accelerationIncludingGravity;
-    const rotationRate = this.rotationRate;
+    const acc = this.accelerationIncludingGravity;
+    const rot = this.rotationRate;
 
-    this._startTime = performance.now();
-
-    if (accelerationIncludingGravity.isValid && rotationRate.isValid) {
-      accelerationIncludingGravity.addListener(([x, y, z]) => {
-        frame.time = (performance.now() - this._startTime) / 1000;
-
-        frame.data[0] = x;
-        frame.data[1] = y;
-        frame.data[2] = z;
-      });
-
-      rotationRate.addListener(([alpha, beta, gamma]) => {
-        frame.data[3] = alpha;
-        frame.data[4] = beta;
-        frame.data[5] = gamma;
-
-        this.propagateFrame();
-      });
-    } else if (accelerationIncludingGravity.isValid) {
-      accelerationIncludingGravity.addListener(([x, y, z]) => {
-        frame.time = (performance.now() - this._startTime) / 1000;
-
-        frame.data[0] = x;
-        frame.data[1] = y;
-        frame.data[2] = z;
-        frame.data[3] = 0;
-        frame.data[4] = 0;
-        frame.data[5] = 0;
-
-        this.propagateFrame();
-      });
+    if (acc.isValid && rot.isValid) {
+      acc.addListener(this._accListener);
+      rot.addListener(this._gyroListener);
+    } else if (acc.isValid) {
+      acc.addListener(this._accOnlyListener);
     } else {
-      throw new Error(`The device doesn't support the devicemotion API`)
+      throw new Error(`The device doesn't support the devicemotion API`);
     }
 
     this.started = true;
   }
 
+  /**
+   * Stop the stream.
+   */
   stop() {
     this.started = false;
     this._startTime = null;
+
+    const acc = this.accelerationIncludingGravity;
+    const rot = this.rotationRate;
+
+    if (acc.isValid && rot.isValid) {
+      acc.removeListener(this._accListener);
+      rot.removeListener(this._gyroListener);
+    } else if (acc.isValid) {
+      acc.removeListener(this._accOnlyListener);
+    }
   }
 
-  // processFrame() {}
+  /** @private */
+  _accListener(data) {
+    frame.time = (performance.now() - this._startTime) / 1000;
+
+    frame.data[0] = data[0];
+    frame.data[1] = data[1];
+    frame.data[2] = data[2];
+  }
+
+  /** @private */
+  _gyroListener(data) {
+    frame.data[3] = data[0];
+    frame.data[4] = data[1];
+    frame.data[5] = data[2];
+
+    this.propagateFrame();
+  }
+
+  /** @private */
+  _accOnlyListener(data) {
+    frame.time = (performance.now() - this._startTime) / 1000;
+
+    frame.data[0] = data[0];
+    frame.data[1] = data[1];
+    frame.data[2] = data[2];
+    frame.data[3] = 0;
+    frame.data[4] = 0;
+    frame.data[5] = 0;
+
+    this.propagateFrame();
+  }
 }
 
 export default MotionInput;
