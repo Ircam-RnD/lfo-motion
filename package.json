@@ -12,7 +12,7 @@
   "scripts": {
     "transpile": "node ./bin/runner --transpile",
     "doc": "jsdoc -c conf.json",
-    "test": "babel-tape-runner tests/*.js",
+    "test": "babel-tape-runner test/*.js",
     "prewatch": "npm run transpile",
     "watch": "node ./bin/runner --watch"
   },
