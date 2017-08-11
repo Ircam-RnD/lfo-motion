@@ -1,15 +1,14 @@
 {
-  "name": "xmm-lfo",
+  "name": "lfo-motion",
   "version": "1.0.1",
-  "description": "waves-lfo wrappers of xmm-client classes",
+  "description": "lfo modules dedicated to motion",
   "main": "dist/index.js",
   "license": "GPL-3.0",
-  "standalone": "xmmLfo",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ircam-RnD/xmm-lfo"
+    "url": "https://github.com/Ircam-RnD/lfo-motion"
   },
-  "homepage": "https://github.com/Ircam-RnD/xmm-lfo",
+  "homepage": "https://github.com/Ircam-RnD/lfo-motion",
   "scripts": {
     "transpile": "node ./bin/runner --transpile",
     "doc": "jsdoc -c conf.json",
@@ -19,13 +18,14 @@
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",
-    "waves-blocks": "github:wavesjs/waves-blocks"
+    "motion-input": "github:collective-soundworks/motion-input"
   },
   "devDependencies": {
     "babel-core": "6.25.0",
     "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-es2015": "6.24.1",
+    "babel-tape-runner": "^2.0.1",
     "browserify": "14.4.0",
     "chalk": "2.1.0",
     "fs-extra": "4.0.1",
