@@ -27,7 +27,8 @@ const parameters = {
  * Mean Crossing Rate operator : estimates energy, frequency and periodicity of
  * a (n-dimension) signal, either on an input stream of signal frames, or by
  * using its own sliding window on an input stream of vectors.
- * The mean is estimated on each new analyzed window using the following equation :
+ *
+ * The mean is estimated on each new analyzed window using the following equation :  
  * `mean = min + (max - min) * 0.5;`
  *
  * @param {Object} options - Override default options
