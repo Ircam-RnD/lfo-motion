@@ -2,7 +2,9 @@
 	"source": {
     "include": [
     	"README.md",
-    	"src"
+    	"src",
+      "src/operator",
+      "src/source"
     ],
     "includePattern": ".+\\.js(doc)?$",
     "excludePattern": "(^|\\/|\\\\)_"
