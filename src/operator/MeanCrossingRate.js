@@ -1,15 +1,7 @@
 import { BaseLfo } from 'waves-lfo/core';
 import _MeanCrossingRate from './_MeanCrossingRate';
 
-// motion-input indices :
-// 0,1,2 -> accelerationIncludingGravity
-// 3,4,5 -> acceleration
-// 6,7,8 -> rotationRate
-
-// but, as they are preprocessed by parent class,
-// indices for acc + gyro are 0, 1, 2, 3, 4, 5 (see below)
-
-const definitions = {
+const parameters = {
   noiseThreshold: {
     type: 'float',
     default: 0.1,
@@ -25,30 +17,53 @@ const definitions = {
     nullable: true,
     metas: { kind: 'static' },
   },
-  centeredTimeTags: {
-    type: 'boolean',
-    default: false,
-  }
+  // centeredTimeTags: {
+  //   type: 'boolean',
+  //   default: false,
+  // }
 }
 
-export default class MeanCrossingRate extends BaseLfo {
+/**
+ * Mean Crossing Rate operator : estimates energy, frequency and periodicity of
+ * a (n-dimension) signal, either on an input stream of signal frames, or by
+ * using its own sliding window on an input stream of vectors.
+ * The mean is estimated on each new analyzed window using the following equation :
+ * `mean = min + (max - min) * 0.5;`
+ *
+ * @param {Object} options - Override default options
+ * @param {Number} [options.noiseThreshold=0.1] - Threshold added to the mean to
+ *  avoid confusion between noise and real signal.
+ * @param {Number} [options.frameSize=512] - Size of the internal sliding window.
+ * @param {Number} [options.hopSize=null] - Number of samples between
+ *  two computations on the internal sliding window.
+ */
+
+// We don't use centered time tags for signal input, as we don't know if it's
+// already been done by a previous slicer.
+// So we don't implement it for now.
+// would be :
+// @param {Boolean} [options.centeredTimeTags=false] - Move the time tag to the
+// middle of the frame.
+
+class MeanCrossingRate extends BaseLfo {
   constructor(options = {}) {
-    super(definitions, options);
+    super(parameters, options);
 
     this._mcrs = [];
   }
 
   /** @private */
   onParamUpdate(name, value, metas) {
-
+    if (!this.params.hopSize) {
+      this.params.set('hopSize', frameSize);
+    }
   }
 
   /** @private */
   processStreamParams(prevStreamParams = {}) {
     this.prepareStreamParams(prevStreamParams);
 
-    // TODO : set output samplerate according to input samplerate + hopSize
-
+    // TODO : set output samplerate according to input samplerate + hopSize (?)
     this._mcrs = [];
 
     for (let i = 0; i < prevStreamParams.frameSize; i++) {
@@ -60,9 +75,34 @@ export default class MeanCrossingRate extends BaseLfo {
       }));
     }
 
-    // for energy, frequency, and periodicity
-    this.streamParams.frameSize = prevStreamParams.frameSize * 3;
-    this.streamParams.frameRate = prevStreamParams.sourceSampleRate;
+    // if input frames are of type "signal", input dimension is 1
+    this.streamParams.frameSize = 3;
+    this.streamParams.description = [ 'energy', 'frequency', 'periodicity' ];
+    this._mcrs.push(new _MeanCrossingRate({
+      noiseThreshold: this.params.get('noiseThreshold'),
+      frameSize: this.params.get('frameSize'),
+      hopSize: this.params.get('hopSize'),
+      sampleRate: prevStreamParams.sourceSampleRate,
+    }));
+
+    // otherwise we have to parallelize :
+    if (this.streamParams.frameType === 'vector') {
+      this.streamParams.frameSize *= prevStreamParams.frameSize;
+
+      for (let i = 1; i < prevStreamParams.frameSize; i++) {
+        this.streamParams.description.concat(this.streamParams.description);
+        this._mcrs.push(new _MeanCrossingRate({
+          noiseThreshold: this.params.get('noiseThreshold'),
+          frameSize: this.params.get('frameSize'),
+          hopSize: this.params.get('hopSize'),
+          sampleRate: prevStreamParams.sourceSampleRate,
+        }));
+      }
+    }
+
+    // not divided by hopSize, we just duplicate frames between.
+    // this means we can comment the following line :
+    // this.streamParams.frameRate = prevStreamParams.sourceSampleRate;
 
     this.propagateStreamParams();
   }
@@ -81,8 +121,9 @@ export default class MeanCrossingRate extends BaseLfo {
   }
 
   /** @private */
-  // processFrame(frame) {
-  //   this.prepareFrame(frame);
-  //   this.processFunction(frame);
-  // }
+  processSignal(frame) {
+    this.frame.data = this._mcrs[0].processFrame(frame.data);
+  }
 };
+
+export default MeanCrossingRate;

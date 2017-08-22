@@ -9,7 +9,7 @@ const defaults = {
 class MeanCrossingRate {
 
   constructor(options = {}) {
-    Object.assign(options, defaults);
+    Object.assign({}, options, defaults);
 
     this.mean = 0;
     this.magnitude = 0;
@@ -50,11 +50,7 @@ class MeanCrossingRate {
     this.hopCounter = 0;
     this.bufferIndex = 0;
 
-    this.results = {
-      amplitude: 0,
-      frequency: 0,
-      periodicity: 0
-    };
+    this.results = { amplitude: 0, frequency: 0, periodicity: 0 };
   }
 
   process(value) {
@@ -75,6 +71,10 @@ class MeanCrossingRate {
 
   // compute magnitude, zero crossing rate, and periodicity
   processFrame(frame, offset = 0) {
+    if (frame.length < 2) {
+      return { amplitude: 0, frequency: 0, periodicity: 0 };
+    }
+
     this.inputFrame = frame;
 
     this._mainAlgorithm();
@@ -86,14 +86,19 @@ class MeanCrossingRate {
     // not used anymore (remove ?)
     // this.frequency = Math.sqrt(this.crossings.length * 2.0 / this.inputFrame.length); // sqrt'ed normalized by nyquist freq
 
-    // this one is working wth one direction crossings detection version
+    /* * * * * * * * * * * * * * * */
+
+    // this one is working with one direction crossings detection version
     // this.frequency = this.crossings.length * 2.0 / this.inputFrame.length; // normalized by nyquist freq
 
     // this one is working with two direction crossings detection version
     this.frequency = this.crossings.length / (this.inputFrame.length - 1); // beware of division by zero
+
+    /* * * * * * * * * * * * * * * */
+
     // if sampleRate is specified, translate normalized frequency to Hertz :
     if (this.sampleRate) {
-      this.frequency *= Math.floo(this.sampleRate / 2);
+      this.frequency *= Math.floor(this.sampleRate / 2);
     }
     
     if (this.crossings.length > 2) {
@@ -151,9 +156,11 @@ class MeanCrossingRate {
     for (let i = 1; i < this.inputFrame.length; i++) {
       let delta = this.inputFrame[i] - this.mean;
       this.stdDev += delta * delta;
+      // falling
       if (prevDelta > this.noiseThreshold && delta < this.noiseThreshold) {
         this.crossings.push(i);
-      } 
+      }
+      // rising
       else if (prevDelta < this.noiseThreshold && delta > this.noiseThreshold) {
         this.crossings.push(i);
       }
