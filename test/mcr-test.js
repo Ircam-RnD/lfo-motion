@@ -1,25 +1,6 @@
 import test from 'tape';
 import _MeanCrossingRate from '../src/operator/_MeanCrossingRate';
 
-/*
-test('motion features', (t) => {
-  const kickCb = (res) => {
-    console.log(`kick : ${res.state} - intensity : ${res.intensity}`);
-  };
-
-  const mf = new MotionFeatures({
-    descriptors: [
-      'accIntensity', 'kick', 'shake',
-      'gyrIntensity', 'spin', 'still',
-      'freefall'
-    ],
-    kickCallback: kickCb
-  });
-
-  // TODO: write actual tests from recorded file
-  t.end();
-});
-*/
 
 test('mean crossing rate', (t) => {
   let mcr = new _MeanCrossingRate({ noiseThreshold: 0.05 });

@@ -77,8 +77,8 @@ class MeanCrossingRate extends BaseLfo {
     }
 
     // if input frames are of type "signal", input dimension is 1
-    this.streamParams.frameSize = 3;
-    this.streamParams.description = [ 'energy', 'frequency', 'periodicity' ];
+    this.streamParams.frameSize = 2;//3;
+    this.streamParams.description = [ /*'energy',*/ 'frequency', 'periodicity' ];
     this._mcrs.push(new _MeanCrossingRate({
       noiseThreshold: this.params.get('noiseThreshold'),
       frameSize: this.params.get('frameSize'),
@@ -115,9 +115,11 @@ class MeanCrossingRate extends BaseLfo {
 
     for (let i = 0; i < this._mcrs.length; i++) {
       const r = this._mcrs[i].process(inData[i]);
-      outData[i * 3]      = r.amplitude;
-      outData[i * 3 + 1]  = r.frequency;
-      outData[i * 3 + 2]  = r.periodicity;
+      // outData[i * 3]      = r.amplitude;
+      // outData[i * 3 + 1]  = r.frequency;
+      // outData[i * 3 + 2]  = r.periodicity;
+      outData[i * 3]      = r.frequency;
+      outData[i * 3 + 1]  = r.periodicity;      
     }
   }
 

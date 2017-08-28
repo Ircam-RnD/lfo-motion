@@ -143,8 +143,8 @@ class MeanCrossingRate {
     //this.mean /= this.inputFrame.length;
     this.mean = min + (max - min) * 0.5;
 
-    this.magnitude /= this.inputFrame.length;
-    this.magnitude = Math.sqrt(this.magnitude);
+    // this.magnitude /= this.inputFrame.length;
+    // this.magnitude = Math.sqrt(this.magnitude);
 
     // compute signal stdDev and number of mean-crossings
     // descending mean crossing is used here
