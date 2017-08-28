@@ -31,7 +31,7 @@ const definitions = {
   }
 }
 
-export default class MeanCrossingRate extends BaseLfo {
+class MeanCrossingRate extends BaseLfo {
   constructor(options = {}) {
     super(definitions, options);
 
@@ -79,10 +79,6 @@ export default class MeanCrossingRate extends BaseLfo {
       outData[i * 3 + 2]  = r.periodicity;
     }
   }
+}
 
-  /** @private */
-  // processFrame(frame) {
-  //   this.prepareFrame(frame);
-  //   this.processFunction(frame);
-  // }
-};
+export default MeanCrossingRate;

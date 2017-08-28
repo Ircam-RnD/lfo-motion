@@ -91,7 +91,6 @@ class MotionInput extends SourceMixin(BaseLfo) {
       return this.initPromise.then(() => this.start(this._startTime));
     }
 
-    const frame = this.frame;
     const acc = this.accelerationIncludingGravity;
     const rot = this.rotationRate;
 
@@ -127,6 +126,7 @@ class MotionInput extends SourceMixin(BaseLfo) {
 
   /** @private */
   _accListener(data) {
+    const frame = this.frame;
     frame.time = (performance.now() - this._startTime) / 1000;
 
     frame.data[0] = data[0];
@@ -136,6 +136,7 @@ class MotionInput extends SourceMixin(BaseLfo) {
 
   /** @private */
   _gyroListener(data) {
+    const frame = this.frame;
     frame.data[3] = data[0];
     frame.data[4] = data[1];
     frame.data[5] = data[2];
@@ -145,6 +146,7 @@ class MotionInput extends SourceMixin(BaseLfo) {
 
   /** @private */
   _accOnlyListener(data) {
+    const frame = this.frame;
     frame.time = (performance.now() - this._startTime) / 1000;
 
     frame.data[0] = data[0];

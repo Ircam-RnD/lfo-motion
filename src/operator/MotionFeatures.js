@@ -13,8 +13,8 @@ const definitions = {
   features: {
     type: 'any',
     default: [
-      'accRaw',
-      'gyrRaw',
+      // 'accRaw',
+      // 'gyrRaw',
       'accIntensity',
       'gyrIntensity',
       'freefall',
@@ -35,15 +35,15 @@ const definitions = {
     default: [3, 4, 5],
     constant: true,
   },
-  callback: {
-    type: 'any',
-    default: null,
-    constant: false,
-    metas: { kind: 'dynamic' },
-  }
+  // callback: {
+  //   type: 'any',
+  //   default: null,
+  //   constant: false,
+  //   metas: { kind: 'dynamic' },
+  // }
 }
 
-export default class MotionFeatures extends BaseLfo {
+class MotionFeatures extends BaseLfo {
   constructor(options = {}) {
     super(definitions, options);
 
@@ -57,8 +57,8 @@ export default class MotionFeatures extends BaseLfo {
     // this._callback = this.params.get('callback');
 
     this._featuresInfo = {
-      accRaw: [ 'x', 'y', 'z' ],
-      gyrRaw: [ 'x', 'y', 'z' ],
+      // accRaw: [ 'x', 'y', 'z' ],
+      // gyrRaw: [ 'x', 'y', 'z' ],
       accIntensity: [ 'norm', 'x', 'y', 'z' ],
       gyrIntensity: [ 'norm', 'x', 'y', 'z' ],
       freefall: [ 'accNorm', 'falling', 'duration' ],
@@ -101,7 +101,7 @@ export default class MotionFeatures extends BaseLfo {
     const outData = this.frame.data;
     const accIndices = this.params.get('accIndices');
     const gyrIndices = this.params.get('gyrIndices');
-    
+
     this._features.setAccelerometer(
       inData[accIndices[0]],
       inData[accIndices[1]],
@@ -117,6 +117,7 @@ export default class MotionFeatures extends BaseLfo {
     const values = this._features.update();
 
     let i = 0;
+
     for (let d of features) {
       const subDesc = this._featuresInfo[d]; // the array of the current descriptor's dimensions names
       const subValues = values[d];
@@ -125,23 +126,20 @@ export default class MotionFeatures extends BaseLfo {
         if (subd === 'duration' || subd === 'slide') {
           subValues[subd] = 0;
         }
+
         outData[i] = subValues[subd]; // here we fill the output frame (data)
         i++;
       }
     }
 
-    if (callback) {
-      const desc = new Array(this.streamParams.frameSize);
-      for (let j = 0; j < desc.length; j++) {
-        desc[j] = outData[j];
-      }
-      callback(desc);
-    }
+    // if (callback) {
+    //   const desc = new Array(this.streamParams.frameSize);
+    //   for (let j = 0; j < desc.length; j++) {
+    //     desc[j] = outData[j];
+    //   }
+    //   callback(desc);
+    // }
   }
+}
 
-  /** @private */
-  // processFrame(frame) {
-  //   this.prepareFrame(frame);
-  //   this.processFunction(frame);
-  // }
-};
+export default MotionFeatures;
