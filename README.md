@@ -43,9 +43,47 @@ $stop.addListener('click', () => {
       console.log('model updated');
     });
 });
+
+
+// offline API (with Reader)
+// given some trainingSet
+
 ```
 
 ```js
+
+class TrainingSetReader {
+  constructor() {
+    // use lfo reader internally
+  }
+
+  play(exampleIndex) {
+
+  }
+
+  pause() {
+
+  }
+
+  stop() {
+    
+  }
+}
+
+class PreProcessingChain() {
+  constructor() {
+
+  }
+
+  start() {
+
+  }
+
+  stop() {
+
+  }
+}
+
 class TrainingData {
   constructor(inputDimension = null, outputDimension = null) {}
 
@@ -108,6 +146,20 @@ class ImlMotion {
    */
   getConfig() {
     return this.config; // 
+  }
+
+  /**
+   * @param {Object} model - RapidMix Model object
+   */
+  setModel(model) {
+
+  }
+
+  /**
+   * @return {Object} - current RapidMix Model object
+   */
+  getModel() {
+
   }
 }
 ```
