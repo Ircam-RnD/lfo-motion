@@ -12,3 +12,13 @@ npm install [--save --save-exact] waves-lfo
 npm install [--save --save-exact] ircam-rnd/lfo-motion
 ```
 
+## @TODOS
+
+Split `MotionFeatures` into :  
+- src/operator/Freefall.js
+- src/operator/Kick.js
+- src/operator/Shake.js
+- src/operator/Spin.js
+- src/operator/Still.js
+
+Merge `_MeanCrossingRate` and `MeanCrossingRate`
