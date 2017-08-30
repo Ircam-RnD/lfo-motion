@@ -23,7 +23,7 @@ socketReceive.processStreamParams({
 });
 
 // normalize for display
-const scaler = new lfo.operator.Scaler({ factor: [
+const multiplier = new lfo.operator.Multiplier({ factor: [
   1 / 9.81,
   1 / 9.81,
   1 / 9.81,
@@ -33,7 +33,7 @@ const scaler = new lfo.operator.Scaler({ factor: [
 ]});
 
 // filter display output
-const phoneMuteDisplay = new lfo.operator.Scaler({ factor: muteDisplayCoefs });
+const phoneMuteDisplay = new lfo.operator.Multiplier({ factor: muteDisplayCoefs });
 
 const phoneDisplay = new lfo.sink.BpfDisplay({
   canvas: '#phone',
@@ -42,9 +42,9 @@ const phoneDisplay = new lfo.sink.BpfDisplay({
   duration: 5,
 });
 
-socketReceive.connect(scaler);
+socketReceive.connect(multiplier);
 
-scaler.connect(phoneMuteDisplay);
+multiplier.connect(phoneMuteDisplay);
 phoneMuteDisplay.connect(phoneDisplay);
 
 /**
@@ -65,7 +65,7 @@ riotSocketReceive.processStreamParams({
   frameRate: 0,
 });
 
-const riotMuteDisplay = new lfo.operator.Scaler({ factor: muteDisplayCoefs });
+const riotMuteDisplay = new lfo.operator.Multiplier({ factor: muteDisplayCoefs });
 
 const riotDisplay = new lfo.sink.BpfDisplay({
   canvas: '#riot',
