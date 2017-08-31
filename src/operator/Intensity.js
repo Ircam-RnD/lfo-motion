@@ -14,7 +14,7 @@ const definitions = {
     type: 'float',
     default: 0.1,
     min: 0,
-    max: +infinity,
+    max: +Infinity,
   },
 };
 
