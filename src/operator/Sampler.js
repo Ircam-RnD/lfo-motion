@@ -9,6 +9,14 @@ if (!Array.prototype.fill) {
   }
 }
 
+if (!Float32Array.prototype.fill) {
+  Float32Array.prototype.fill = function(val) {
+    for (let i = 0; i < this.length; i++) {
+      this[i] = val;
+    }
+  }
+}
+
 const parameters = {
   frameRate: {
     type: 'integer',
