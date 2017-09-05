@@ -43,6 +43,9 @@ const definitions = {
   // }
 }
 
+/**
+ * @deprecated
+ */
 class MotionFeatures extends BaseLfo {
   constructor(options = {}) {
     super(definitions, options);

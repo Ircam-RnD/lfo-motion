@@ -119,7 +119,7 @@ class MeanCrossingRate extends BaseLfo {
       // outData[i * 3 + 1]  = r.frequency;
       // outData[i * 3 + 2]  = r.periodicity;
       outData[i * 3]      = r.frequency;
-      outData[i * 3 + 1]  = r.periodicity;      
+      outData[i * 3 + 1]  = r.periodicity;
     }
   }
 
