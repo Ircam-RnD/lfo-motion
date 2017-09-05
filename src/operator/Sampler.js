@@ -1,14 +1,6 @@
 import * as lfo from 'waves-lfo/core';
 import Ticker from '@ircam/ticker';
 
-if (!Array.prototype.fill) {
-  Array.prototype.fill = function(val) {
-    for (let i = 0; i < this.length; i++) {
-      this[i] = val;
-    }
-  }
-}
-
 if (!Float32Array.prototype.fill) {
   Float32Array.prototype.fill = function(val) {
     for (let i = 0; i < this.length; i++) {
