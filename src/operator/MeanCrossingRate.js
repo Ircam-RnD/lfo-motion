@@ -1,5 +1,5 @@
 import { BaseLfo } from 'waves-lfo/core';
-import _MeanCrossingRate from './_MeanCrossingRate';
+import MeanCrossingRateBase from './MeanCrossingRateBase';
 
 const parameters = {
   noiseThreshold: {
@@ -68,7 +68,7 @@ class MeanCrossingRate extends BaseLfo {
     this._mcrs = [];
 
     for (let i = 0; i < prevStreamParams.frameSize; i++) {
-      this._mcrs.push(new _MeanCrossingRate({
+      this._mcrs.push(new MeanCrossingRateBase({
         noiseThreshold: this.params.get('noiseThreshold'),
         frameSize: this.params.get('frameSize'),
         hopSize: this.params.get('hopSize'),
@@ -79,7 +79,7 @@ class MeanCrossingRate extends BaseLfo {
     // if input frames are of type "signal", input dimension is 1
     this.streamParams.frameSize = 2;//3;
     this.streamParams.description = [ /*'energy',*/ 'frequency', 'periodicity' ];
-    this._mcrs.push(new _MeanCrossingRate({
+    this._mcrs.push(new MeanCrossingRateBase({
       noiseThreshold: this.params.get('noiseThreshold'),
       frameSize: this.params.get('frameSize'),
       hopSize: this.params.get('hopSize'),
@@ -92,7 +92,7 @@ class MeanCrossingRate extends BaseLfo {
 
       for (let i = 1; i < prevStreamParams.frameSize; i++) {
         this.streamParams.description.concat(this.streamParams.description);
-        this._mcrs.push(new _MeanCrossingRate({
+        this._mcrs.push(new MeanCrossingRateBase({
           noiseThreshold: this.params.get('noiseThreshold'),
           frameSize: this.params.get('frameSize'),
           hopSize: this.params.get('hopSize'),
@@ -115,9 +115,6 @@ class MeanCrossingRate extends BaseLfo {
 
     for (let i = 0; i < this._mcrs.length; i++) {
       const r = this._mcrs[i].process(inData[i]);
-      // outData[i * 3]      = r.amplitude;
-      // outData[i * 3 + 1]  = r.frequency;
-      // outData[i * 3 + 2]  = r.periodicity;
       outData[i * 3]      = r.frequency;
       outData[i * 3 + 1]  = r.periodicity;
     }
