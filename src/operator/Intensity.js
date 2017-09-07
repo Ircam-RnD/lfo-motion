@@ -6,15 +6,14 @@ const Delta = lfo.operator.Delta;
 const definitions = {
   feedback: {
     type: 'float',
-    default: 0.9,
+    default: 0.7,
     min: 0,
     max: 1,
   },
   gain: {
     type: 'float',
-    default: 0.1,
+    default: 0.07,
     min: 0,
-    max: +Infinity,
   },
 };
 
@@ -29,8 +28,8 @@ const pow = Math.pow;
  *
  * output: [normIntensity, xIntensity, yIntensity, zIntensity]
  *
- * @param {Number} [feedback=0.9] - feedback coefficient
- * @param {Number} [gain=0.1] - post gain coefficient
+ * @param {Number} [feedback=0.7] - feedback coefficient
+ * @param {Number} [gain=0.07] - post gain coefficient
  * @param {Boolean} [boost=false] - compute a noramlized
  */
 class Intensity extends BaseLfo {
