@@ -5,13 +5,13 @@ const parameters = {
     type: 'float',
     min: 0,
     max: +Infinity,
-    default: 0.005,
+    default: 0.5,
   },
   offThreshold: {
     type: 'float',
     min: 0,
     max: +Infinity,
-    default: 0.0001,
+    default: 0.01,
   },
   offDelay: {
     type: 'float',
@@ -33,7 +33,7 @@ const parameters = {
  * @param {Number} offThreshold - The threshold below which moving stops.
  * @param {Number} offDelay - The allowed duration to go below the low threshold without sending .
  */
-class StillAutoTrigger extends lfo.BaseLfo {
+class StillAutoTrigger extends BaseLfo {
   constructor(options = {}) {
     super(parameters, options);
 
@@ -65,10 +65,7 @@ class StillAutoTrigger extends lfo.BaseLfo {
 
     if (value > this.params.get('onThreshold') && !this.isMoving) {
       this.isMoving = true;
-
-      if (this.timeoutId !== null) {
-        this._start(frame);
-      }
+      this._start(frame);
     } else if (value < this.params.get('offThreshold') && this.isMoving) {
       this.isMoving = false; // keep this out of the timeout
 
