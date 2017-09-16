@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "lfo modules dedicated to motion",
   "main": "dist/index.js",
-  "license": "GPL-3.0",
+  "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/Ircam-RnD/lfo-motion"
