@@ -73,8 +73,6 @@ class Orientation extends BaseLfo {
     this.gyroEstimate = new Float32Array(3);
     // filtered vector
     this.accEstimate = new Float32Array(3);
-    // keep track of last accEstimate in case we have NaNs
-    // this.lastAccEstimate = new Float32Array(3);
 
 
     this.propagateStreamParams();
@@ -112,10 +110,8 @@ class Orientation extends BaseLfo {
     if (!this.lastTime) {
       this.lastTime = time;
       // initialize corrected orientation with normalized accelerometer data
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 3; i++)
         accEstimate[i] = accVector[i];
-        // lastAccEstimate[i] = accEstimate[i];
-      }
 
       return;
     } else {
