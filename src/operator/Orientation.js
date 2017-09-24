@@ -117,7 +117,7 @@ class Orientation extends BaseLfo {
       // define if we use that or use the logical `MotionEvent.interval`
       const dt = time - this.lastTime;
 
-      if (dt <= 0) return;
+      if (dt < 0) return;
 
       this.lastTime = time;
 
@@ -145,7 +145,7 @@ class Orientation extends BaseLfo {
         // RzGyro is positive if  Axz in range -90 ..90 => cos(Awz) >= 0
         const signYaw = cos(rollAngle) >= 0 ? 1 : -1;
         // estimate yaw since vector is normalized
-        // gyroEstimate[2] = signYaw * sqrt(1 - pow(gyroEstimate[0], 2) - pow(gyroEstimate[1], 2));
+        gyroEstimate[2] = signYaw * sqrt(1 - pow(gyroEstimate[0], 2) - pow(gyroEstimate[1], 2));
         const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
 
         if (gyroEstimateSquared > 1) {
