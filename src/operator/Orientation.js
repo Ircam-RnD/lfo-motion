@@ -74,7 +74,7 @@ class Orientation extends BaseLfo {
     // filtered vector
     this.accEstimate = new Float32Array(3);
     // keep track of last accEstimate in case we have NaNs
-    this.lastAccEstimate = new Float32Array(3);
+    // this.lastAccEstimate = new Float32Array(3);
 
 
     this.propagateStreamParams();
@@ -114,7 +114,7 @@ class Orientation extends BaseLfo {
       // initialize corrected orientation with normalized accelerometer data
       for (let i = 0; i < 3; i++) {
         accEstimate[i] = accVector[i];
-        lastAccEstimate[i] = accEstimate[i];
+        // lastAccEstimate[i] = accEstimate[i];
       }
 
       return;
@@ -166,18 +166,18 @@ class Orientation extends BaseLfo {
       normalize(accEstimate);
     }
 
-    for (let i = 0; i< 3; i++) {
-      if (Number.isFinite(accEstimate[i])) {
-        output[i] = accEstimate[i];
-      } else {
-        output[i] = lastAccEstimate[i];
-        lastAccEstimate[i] = accEstimate[i];
-      }
-    }
+    // for (let i = 0; i< 3; i++) {
+    //   if (Number.isFinite(accEstimate[i])) {
+    //     output[i] = accEstimate[i];
+    //   } else {
+    //     output[i] = lastAccEstimate[i];
+    //     lastAccEstimate[i] = accEstimate[i];
+    //   }
+    // }
 
-    // output[0] = accEstimate[0];
-    // output[1] = accEstimate[1];
-    // output[2] = accEstimate[2];
+    output[0] = accEstimate[0];
+    output[1] = accEstimate[1];
+    output[2] = accEstimate[2];
   }
 }
 
