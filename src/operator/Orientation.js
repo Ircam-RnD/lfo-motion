@@ -73,6 +73,8 @@ class Orientation extends BaseLfo {
     this.gyroEstimate = new Float32Array(3);
     // filtered vector
     this.accEstimate = new Float32Array(3);
+    // keep track of last accEstimate in case we have NaNs
+    this.lastAccEstimate = new Float32Array(3);
 
 
     this.propagateStreamParams();
@@ -84,6 +86,7 @@ class Orientation extends BaseLfo {
     const input = frame.data;
     const output = this.frame.data;
     const accEstimate = this.accEstimate;
+    const lastAccEstimate = this.lastAccEstimate;
     const gyroEstimate = this.gyroEstimate;
 
     const k = this.params.get('k');
@@ -109,15 +112,15 @@ class Orientation extends BaseLfo {
     if (!this.lastTime) {
       this.lastTime = time;
       // initialize corrected orientation with normalized accelerometer data
-      for (let i = 0; i < 3; i++)
+      for (let i = 0; i < 3; i++) {
         accEstimate[i] = accVector[i];
+        lastAccEstimate[i] = accEstimate[i];
+      }
 
       return;
     } else {
       // define if we use that or use the logical `MotionEvent.interval`
       const dt = time - this.lastTime;
-
-      if (dt < 0) return;
 
       this.lastTime = time;
 
@@ -146,13 +149,14 @@ class Orientation extends BaseLfo {
         const signYaw = cos(rollAngle) >= 0 ? 1 : -1;
         // estimate yaw since vector is normalized
         gyroEstimate[2] = signYaw * sqrt(1 - pow(gyroEstimate[0], 2) - pow(gyroEstimate[1], 2));
-        const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
 
-        if (gyroEstimateSquared > 1) {
-          gyroEstimate[2] = signYaw;
-        } else {
-          gyroEstimate[2] = siqnYaw * sqrt(1 - gyroEstimateSquared);
-        }
+        // const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
+
+        // if (gyroEstimateSquared > 1) {
+        //   gyroEstimate[2] = signYaw;
+        // } else {
+        //   gyroEstimate[2] = siqnYaw * sqrt(1 - gyroEstimateSquared);
+        // }
       }
 
       // interpolate between estimated values and raw values
@@ -162,9 +166,18 @@ class Orientation extends BaseLfo {
       normalize(accEstimate);
     }
 
-    output[0] = accEstimate[0];
-    output[1] = accEstimate[1];
-    output[2] = accEstimate[2];
+    for (let i = 0; i< 3; i++) {
+      if (Number.isFinite(accEstimate[i])) {
+        output[i] = accEstimate[i];
+      } else {
+        output[i] = lastAccEstimate[i];
+        lastAccEstimate[i] = accEstimate[i];
+      }
+    }
+
+    // output[0] = accEstimate[0];
+    // output[1] = accEstimate[1];
+    // output[2] = accEstimate[2];
   }
 }
 
