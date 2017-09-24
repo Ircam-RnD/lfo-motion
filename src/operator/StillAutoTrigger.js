@@ -77,12 +77,14 @@ class StillAutoTrigger extends BaseLfo {
 
   /** @private */
   _start(frame) {
+    if (this.timeoutId !== null) {
+      this.frame.time = frame.time;
+      this.frame.data[0] = 1;
+      this.propagateFrame();
+    }
+
     clearTimeout(this.timeoutId);
     this.timeoutId = null;
-
-    this.frame.time = frame.time;
-    this.frame.data[0] = 1;
-    this.propagateFrame();
   }
 
   /** @private */

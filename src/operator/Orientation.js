@@ -12,11 +12,16 @@ const tan = Math.tan;
 const toDeg = 180 / Math.PI;
 const toRad = Math.PI / 180;
 
+const epsilon = 1e-9;
+
 function normalize(v) {
   const mag = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-  v[0] /= mag;
-  v[1] /= mag;
-  v[2] /= mag;
+
+  if (mag > epsilon) {
+    v[0] /= mag;
+    v[1] /= mag;
+    v[2] /= mag;
+  }
 
   return v;
 }
