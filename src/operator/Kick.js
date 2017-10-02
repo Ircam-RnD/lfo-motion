@@ -28,9 +28,9 @@ const definitions = {
  * output of the `Intensity` operator. The module outputs when a kick is found.
  *
  * @param {Object} options - An object containing parameters to initialize.
- * @param {Number} options.filterOrder - Buffer size of the internal median filter.
- * @param {Number} options.threshold - The intensity threshold above which to trig a kick.
- * @param {Number} options.minInter - Minimum interval between successive trigs in seconds.
+ * @param {Number} [options.filterOrder=5] - Buffer size of the internal median filter.
+ * @param {Number} [options.threshold=0.01] - The intensity threshold above which to trig a kick.
+ * @param {Number} [options.minInter=0.2] - Minimum interval between successive trigs in seconds.
  *
  * @example
  * import * as lfoMotion from 'lfo-motion';
