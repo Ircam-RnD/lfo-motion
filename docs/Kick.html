@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Documentation - Class: MotionFeatures</title>
+    <title>Documentation - Class: Kick</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -20,7 +20,7 @@
 
     <!-- if home page assume a title is already present in README -->
     
-    <h1 class="page-title">Class: MotionFeatures</h1>
+    <h1 class="page-title">Class: Kick</h1>
     
 
     
@@ -32,7 +32,10 @@
 
 <header>
     
-        <h2>MotionFeatures</h2>
+        <h2>Kick</h2>
+        
+            <div class="class-description"><p>Find a kick from the sensors values. The module must be connected to the
+output of the <code>Intensity</code> operator. The module outputs when a kick is found.</p></div>
         
     
 </header>
@@ -43,8 +46,10 @@
         
 
     
+    <h2>Constructor</h2>
+    
 
-    <h4 class="name" id="MotionFeatures"><span class="type-signature"></span>new MotionFeatures<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Kick"><span class="type-signature"></span>new Kick<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 
@@ -56,6 +61,50 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -79,8 +128,6 @@
     
 
     
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
 
     
 
@@ -93,7 +140,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="operator_MotionFeatures.js.html">operator/MotionFeatures.js</a>, <a href="operator_MotionFeatures.js.html#line49">line 49</a>
+        <a href="operator_Kick.js.html">operator/Kick.js</a>, <a href="operator_Kick.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -116,6 +163,14 @@
 
 
 
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>import * as lfoMotion from 'lfo-motion';
+
+const sensors = new lfo.source.MotionInput();
+const intensity = new lfo.operator.Intensity();</code></pre>
 
 
 

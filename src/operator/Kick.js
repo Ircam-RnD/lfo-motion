@@ -3,19 +3,6 @@ import * as lfo from 'waves-lfo/common';
 const BaseLfo = lfo.core.BaseLfo;
 const MovingMedian = lfo.operator.MovingMedian;
 
-/**
- * Find a kick from the sensors values. The module must be connected to the
- * output of the `Intensity` operator. The module outputs when a kick is found.
- *
- * @param {}
- *
- * @example
- * import * as lfoMotion from 'lfo-motion';
- *
- * const sensors = new lfo.source.MotionInput();
- * const intensity = new lfo.operator.Intensity();
- *
- */
 const definitions = {
   filterOrder: {
     type: 'integer',
@@ -36,6 +23,19 @@ const definitions = {
   },
 };
 
+/**
+ * Find a kick from the sensors values. The module must be connected to the
+ * output of the `Intensity` operator. The module outputs when a kick is found.
+ *
+ * @param {}
+ *
+ * @example
+ * import * as lfoMotion from 'lfo-motion';
+ *
+ * const sensors = new lfo.source.MotionInput();
+ * const intensity = new lfo.operator.Intensity();
+ *
+ */
 class Kick extends BaseLfo {
   constructor(options) {
     super(definitions, options);
