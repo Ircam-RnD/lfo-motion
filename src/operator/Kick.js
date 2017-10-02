@@ -27,7 +27,10 @@ const definitions = {
  * Find a kick from the sensors values. The module must be connected to the
  * output of the `Intensity` operator. The module outputs when a kick is found.
  *
- * @param {}
+ * @param {Object} options - An object containing parameters to initialize.
+ * @param {Number} options.filterOrder - Buffer size of the internal median filter.
+ * @param {Number} options.threshold - The intensity threshold above which to trig a kick.
+ * @param {Number} options.minInter - Minimum interval between successive trigs in seconds.
  *
  * @example
  * import * as lfoMotion from 'lfo-motion';
@@ -37,7 +40,7 @@ const definitions = {
  *
  */
 class Kick extends BaseLfo {
-  constructor(options) {
+  constructor(options = {}) {
     super(definitions, options);
 
     this.movingMedian = new MovingMedian({
