@@ -146,7 +146,6 @@ class Orientation extends BaseLfo {
         const signYaw = cos(rollAngle) >= 0 ? 1 : -1;
 
         // estimate yaw since vector is normalized
-        // gyroEstimate[2] = signYaw * sqrt(1 - pow(gyroEstimate[0], 2) - pow(gyroEstimate[1], 2));
         const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
         gyroEstimate[2] = signYaw * sqrt(max(0, 1 - gyroEstimateSquared));
       }
