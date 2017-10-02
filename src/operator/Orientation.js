@@ -8,6 +8,7 @@ const sin = Math.sin;
 const sqrt = Math.sqrt;
 const pow = Math.pow;
 const tan = Math.tan;
+const max = Math.max;
 
 const toDeg = 180 / Math.PI;
 const toRad = Math.PI / 180;
@@ -118,8 +119,6 @@ class Orientation extends BaseLfo {
       // define if we use that or use the logical `MotionEvent.interval`
       const dt = time - this.lastTime;
 
-      if (dt < 0) return;
-
       this.lastTime = time;
 
       // as accEstimate is a normalized vector maybe this could be variable
@@ -148,14 +147,8 @@ class Orientation extends BaseLfo {
 
         // estimate yaw since vector is normalized
         // gyroEstimate[2] = signYaw * sqrt(1 - pow(gyroEstimate[0], 2) - pow(gyroEstimate[1], 2));
-
         const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
-
-        if (gyroEstimateSquared > 1) {
-          gyroEstimate[2] = signYaw;
-        } else {
-          gyroEstimate[2] = signYaw * sqrt(1 - gyroEstimateSquared);
-        }
+        gyroEstimate[2] = signYaw * sqrt(max(0, 1 - gyroEstimateSquared));
       }
 
       // interpolate between estimated values and raw values
@@ -164,15 +157,6 @@ class Orientation extends BaseLfo {
 
       normalize(accEstimate);
     }
-
-    // for (let i = 0; i< 3; i++) {
-    //   if (Number.isFinite(accEstimate[i])) {
-    //     output[i] = accEstimate[i];
-    //   } else {
-    //     output[i] = lastAccEstimate[i];
-    //     lastAccEstimate[i] = accEstimate[i];
-    //   }
-    // }
 
     output[0] = accEstimate[0];
     output[1] = accEstimate[1];

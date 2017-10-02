@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Documentation - Class: MeanCrossingRate</title>
+    <title>Documentation - Class: StillAutoTrigger</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -20,7 +20,7 @@
 
     <!-- if home page assume a title is already present in README -->
     
-    <h1 class="page-title">Class: MeanCrossingRate</h1>
+    <h1 class="page-title">Class: StillAutoTrigger</h1>
     
 
     
@@ -32,13 +32,13 @@
 
 <header>
     
-        <h2>MeanCrossingRate</h2>
+        <h2>StillAutoTrigger</h2>
         
-            <div class="class-description"><p>Mean Crossing Rate operator : estimates energy, frequency and periodicity of
-a (n-dimension) signal, either on an input stream of signal frames, or by
-using its own sliding window on an input stream of vectors.</p>
-<p>The mean is estimated on each new analyzed window using the following equation :
-<code>mean = min + (max - min) * 0.5;</code></p></div>
+            <div class="class-description"><p>Simple switch control using intensity input to output sparse frames
+of length 1, containing either 1 (start moving) or 0 (stop moving).
+The detection is based on a schmitt trigger system, and also features
+a timeout duration allowing to go below the low threshold for a certain
+amount of time without sending the 0 value.</p></div>
         
     
 </header>
@@ -52,7 +52,7 @@ using its own sliding window on an input stream of vectors.</p>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="MeanCrossingRate"><span class="type-signature"></span>new MeanCrossingRate<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StillAutoTrigger"><span class="type-signature"></span>new StillAutoTrigger<span class="signature">(options, onThreshold, offThreshold, offDelay)</span><span class="type-signature"></span></h4>
 
     
 
@@ -107,37 +107,14 @@ using its own sliding window on an input stream of vectors.</p>
 
             
 
-            <td class="description last"><p>Override default options</p>
-                <h6>Properties</h6>
-                
+            <td class="description last"><p>Override default options.</p></td>
+        </tr>
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
         <tr>
             
-                <td class="name"><code>noiseThreshold</code></td>
+                <td class="name"><code>onThreshold</code></td>
             
 
             <td class="type">
@@ -150,34 +127,17 @@ using its own sliding window on an input stream of vectors.</p>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    0.1
-                
-                </td>
-            
 
-            <td class="description last"><p>Threshold added to the mean to
- avoid confusion between noise and real signal.</p></td>
+            <td class="description last"><p>The threshold above which moving starts.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>frameSize</code></td>
+                <td class="name"><code>offThreshold</code></td>
             
 
             <td class="type">
@@ -190,33 +150,17 @@ using its own sliding window on an input stream of vectors.</p>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    512
-                
-                </td>
-            
 
-            <td class="description last"><p>Size of the internal sliding window.</p></td>
+            <td class="description last"><p>The threshold below which moving stops.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>hopSize</code></td>
+                <td class="name"><code>offDelay</code></td>
             
 
             <td class="type">
@@ -229,34 +173,10 @@ using its own sliding window on an input stream of vectors.</p>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
 
-            <td class="description last"><p>Number of samples between
- two computations on the internal sliding window.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
+            <td class="description last"><p>The allowed duration to go below the low threshold without sending .</p></td>
         </tr>
 
     
@@ -297,7 +217,7 @@ using its own sliding window on an input stream of vectors.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="operator_MeanCrossingRate.js.html">operator/MeanCrossingRate.js</a>, <a href="operator_MeanCrossingRate.js.html#line49">line 49</a>
+        <a href="operator_StillAutoTrigger.js.html">operator/StillAutoTrigger.js</a>, <a href="operator_StillAutoTrigger.js.html#line36">line 36</a>
     </li></ul></dd>
     
 
