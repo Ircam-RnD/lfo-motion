@@ -1,4 +1,4 @@
-import MeanCrossingRate from './MeanCrossingRate';
+import MeanCrossingRateBase from './MeanCrossingRate';
 
 /**
  * Create a function that returns time in seconds according to the current
@@ -49,7 +49,7 @@ const perfNow = getTimeFunction();
  * <br />
  * es6 + browserify example :
  * ```JavaScript
- * import { MotionFeatures } from 'motion-features'; 
+ * import { MotionFeatures } from 'motion-features';
  * const mf = new MotionFeatures({ features: ['accIntensity', 'kick'] });
  *
  * // then, on each motion event :
@@ -403,7 +403,7 @@ class MotionFeatures {
         if (this._methods[key]) {
           this._methods[key](res);
         }
-      } 
+      }
     } catch (e) {
       err = e;
     }
@@ -411,7 +411,7 @@ class MotionFeatures {
     this._loopIndex = (this._loopIndex + 1) % this._loopIndexPeriod;
 
     if (callback) {
-      callback(err, res);  
+      callback(err, res);
     }
     return res;
   }
@@ -542,7 +542,7 @@ class MotionFeatures {
       // check right
       while (this._i1 + this._i2 < this.kickMedianFiltersize &&
               this._accIntensityNorm > this._medianValues[this._i1 + this._i2]) {
-        this._medianFifo[this._medianLinking[this._i1 + this._i2]] = 
+        this._medianFifo[this._medianLinking[this._i1 + this._i2]] =
         this._medianFifo[this._medianLinking[this._i1 + this._i2]] - 1;
         this._medianValues[this._i1 + this._i2 - 1] =
         this._medianValues[this._i1 + this._i2];
@@ -676,7 +676,7 @@ class MotionFeatures {
     } else {
       this._isStill = true;
     }
-  
+
     res.still = {
       still: this._isStill,
       slide: this._stillSlide
@@ -723,7 +723,7 @@ class MotionFeatures {
 
   /** @private */
   _magnitude3D(xyzArray) {
-    return Math.sqrt(xyzArray[0] * xyzArray[0] + 
+    return Math.sqrt(xyzArray[0] * xyzArray[0] +
                      xyzArray[1] * xyzArray[1] +
                      xyzArray[2] * xyzArray[2]);
   }

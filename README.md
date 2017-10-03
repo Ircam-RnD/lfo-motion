@@ -14,11 +14,12 @@ npm install [--save --save-exact] ircam-rnd/lfo-motion
 
 ## @TODOS
 
-Split `MotionFeatures` into :  
+Split `MotionFeatures` into :
 - src/operator/Freefall.js
-- src/operator/Kick.js
 - src/operator/Shake.js
 - src/operator/Spin.js
 - src/operator/Still.js
 
-Merge `_MeanCrossingRate` and `MeanCrossingRate`
+Already done for :
+- src/operator/Intensity.js
+- src/operator/Kick.js
