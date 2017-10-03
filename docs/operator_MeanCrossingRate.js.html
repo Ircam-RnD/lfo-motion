@@ -31,7 +31,6 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>import { BaseLfo } from 'waves-lfo/core';
-import MeanCrossingRateBase from './MeanCrossingRateBase';
 
 const parameters = {
   noiseThreshold: {
@@ -56,19 +55,24 @@ const parameters = {
 }
 
 /**
- * Mean Crossing Rate operator : estimates energy, frequency and periodicity of
+ * Mean Crossing Rate operator : estimates the frequency and periodicity of
  * a (n-dimension) signal, either on an input stream of signal frames, or by
  * using its own sliding window on an input stream of vectors.
  *
  * The mean is estimated on each new analyzed window using the following equation :
  * `mean = min + (max - min) * 0.5;`
  *
- * @param {Object} options - Override default options
+ * output: an array of size `2 * inputDimension`
+ * (`[ frequency1, periodicity1, ... frequencyN, periodicityN ]`)
+ *
+ * @param {Object} [options] - Override default options.
  * @param {Number} [options.noiseThreshold=0.1] - Threshold added to the mean to
  *  avoid confusion between noise and real signal.
  * @param {Number} [options.frameSize=512] - Size of the internal sliding window.
+ * Will be ignored if input is signal.
  * @param {Number} [options.hopSize=null] - Number of samples between
- *  two computations on the internal sliding window.
+ * two computations on the internal sliding window. Will be ignored is input is
+ * signal.
  */
 
 // We don't use centered time tags for signal input, as we don't know if it's
@@ -87,9 +91,11 @@ class MeanCrossingRate extends BaseLfo {
 
   /** @private */
   onParamUpdate(name, value, metas) {
-    if (!this.params.hopSize) {
+    if (!this.params.hopSize)
       this.params.set('hopSize', frameSize);
-    }
+
+    if (this.streamParams.frameType === 'signal')
+      this.params.set('frameSize', this.prevStreamParams.frameSize);
   }
 
   /** @private */
@@ -99,43 +105,37 @@ class MeanCrossingRate extends BaseLfo {
     // TODO : set output samplerate according to input samplerate + hopSize (?)
     this._mcrs = [];
 
-    for (let i = 0; i &lt; prevStreamParams.frameSize; i++) {
+    const noiseThreshold = this.params.get('noiseThreshold');
+    const frameSize = (this.streamParams.frameType === 'vector')
+                    ? this.params.get('frameSize')
+                    : prevStreamParams.frameSize;
+    const hopSize = this.params.get('hopSize'); // if input is signal we don't care anyway
+    const sampleRate = prevStreamParams.sourceSampleRate;
+
+    const paramsDescription = [ 'frequency', 'periodicity' ];
+
+    let inputDimension = 1;
+
+    if (this.streamParams.frameType === 'vector') {
+      inputDimension = prevStreamParams.frameSize;
+    } else if (this.streamParams.frameType === 'signal') {
+      // if input frames are of type "signal", input dimension is 1
+      inputDimension = 1;
+    }
+
+    this.streamParams.frameSize = 2 * inputDimension;
+    this.streamParams.description = [];
+
+    for (let i = 0; i &lt; inputDimension; i++) {
+      this.streamParams.description.concat(paramsDescription);
+
       this._mcrs.push(new MeanCrossingRateBase({
-        noiseThreshold: this.params.get('noiseThreshold'),
-        frameSize: this.params.get('frameSize'),
-        hopSize: this.params.get('hopSize'),
-        sampleRate: prevStreamParams.sourceSampleRate,
+        noiseThreshold: noiseThreshold,
+        frameSize: frameSize,
+        hopSize: hopSize,
+        sampleRate: sampleRate,
       }));
     }
-
-    // if input frames are of type "signal", input dimension is 1
-    this.streamParams.frameSize = 2;//3;
-    this.streamParams.description = [ /*'energy',*/ 'frequency', 'periodicity' ];
-    this._mcrs.push(new MeanCrossingRateBase({
-      noiseThreshold: this.params.get('noiseThreshold'),
-      frameSize: this.params.get('frameSize'),
-      hopSize: this.params.get('hopSize'),
-      sampleRate: prevStreamParams.sourceSampleRate,
-    }));
-
-    // otherwise we have to parallelize :
-    if (this.streamParams.frameType === 'vector') {
-      this.streamParams.frameSize *= prevStreamParams.frameSize;
-
-      for (let i = 1; i &lt; prevStreamParams.frameSize; i++) {
-        this.streamParams.description.concat(this.streamParams.description);
-        this._mcrs.push(new MeanCrossingRateBase({
-          noiseThreshold: this.params.get('noiseThreshold'),
-          frameSize: this.params.get('frameSize'),
-          hopSize: this.params.get('hopSize'),
-          sampleRate: prevStreamParams.sourceSampleRate,
-        }));
-      }
-    }
-
-    // not divided by hopSize, we just duplicate frames between.
-    // this means we can comment the following line :
-    // this.streamParams.frameRate = prevStreamParams.sourceSampleRate;
 
     this.propagateStreamParams();
   }
@@ -147,18 +147,223 @@ class MeanCrossingRate extends BaseLfo {
 
     for (let i = 0; i &lt; this._mcrs.length; i++) {
       const r = this._mcrs[i].process(inData[i]);
-      outData[i * 3]      = r.frequency;
-      outData[i * 3 + 1]  = r.periodicity;
+      outData[i * 2] = r.frequency;
+      outData[i * 2 + 1] = r.periodicity;
     }
   }
 
   /** @private */
   processSignal(frame) {
-    this.frame.data = this._mcrs[0].processFrame(frame.data);
+    const inData = frame.data;
+    const outData = this.frame.data;
+
+    const r = this._mcrs[0].processFrame(inData);
+    outData[0] = r.frequency;
+    outData[1] = r.periodicity;
   }
 }
 
 export default MeanCrossingRate;
+
+//----------------------------------------------------------------------------//
+//=============== Base class for mean crossing rate computation ==============//
+//----------------------------------------------------------------------------//
+
+const mcrBaseDefaults = {
+  noiseThreshold: 0.1,
+  // only used with internal circular buffer (fed sample(s) by sample(s)),
+  // when input type is vector :
+  frameSize: 50,
+  hopSize: 5,
+  sampleRate: null,
+};
+
+class MeanCrossingRateBase {
+
+  constructor(options = {}) {
+    Object.assign({}, options, mcrBaseDefaults);
+
+    this.mean = 0;
+    this.magnitude = 0;
+    this.stdDev = 0;
+    this.crossings = [];
+    this.periodMean = 0;
+    this.periodStdDev = 0;
+    this.inputFrame = [];
+
+    this.setConfig(options);
+
+    //this.maxFreq = this.inputRate / 0.5;
+  }
+
+  setConfig(cfg) {
+    if (cfg.noiseThreshold) {
+      this.noiseThreshold = cfg.noiseThreshold;
+    }
+
+    if (cfg.frameSize) {
+      this.frameSize = cfg.frameSize;
+    }
+
+    if (cfg.hopSize) {
+      this.hopSize = cfg.hopSize;
+    }
+
+    if (cfg.sampleRate) {
+      this.sampleRate = cfg.sampleRate;
+      // this.maxFreq = this.sampleRate / 2;
+    }
+
+    this.inputBuffer = new Array(this.frameSize);
+    for (let i = 0; i &lt; this.frameSize; i++) {
+      this.inputBuffer[i] = 0;
+    }
+
+    this.hopCounter = 0;
+    this.bufferIndex = 0;
+
+    this.results = { amplitude: 0, frequency: 0, periodicity: 0 };
+  }
+
+  process(value) {
+    // update internal circular buffer
+    // then call processFrame(this.inputBuffer) if needed
+    this.inputBuffer[this.bufferIndex] = value;
+    this.bufferIndex = (this.bufferIndex + 1) % this.frameSize;
+
+    if (this.hopCounter === this.hopSize - 1) {
+      this.hopCounter = 0;
+      this.processFrame(this.inputBuffer, this.bufferIndex)
+    } else {
+      this.hopCounter++;
+    }
+
+    return this.results;
+  }
+
+  // compute magnitude, zero crossing rate, and periodicity
+  processFrame(frame, offset = 0) {
+    if (frame.length &lt; 2) {
+      return { amplitude: 0, frequency: 0, periodicity: 0 };
+    }
+
+    this.inputFrame = frame;
+
+    this._mainAlgorithm();
+
+    // TODO: improve this (2.0 is empirical factor because we don't know a priori sensor range)
+    this.amplitude = this.stdDev * 2.0;
+
+    /* * * * * * * * * * * * * * * */
+
+    // this one is working with one direction crossings detection version
+    this.frequency = this.crossings.length / Math.floor(this.inputFrame.length * 0.5); // normalized by "nyquist ratio"
+
+    // this one is working with two direction crossings detection version
+    // this.frequency = this.crossings.length / (this.inputFrame.length - 1); // beware of division by zero
+
+    // if sampleRate is specified, translate normalized frequency to Hertz :
+    if (this.sampleRate) {
+      this.frequency *= Math.floor(this.sampleRate / 2);
+    }
+
+    /* * * * * * * * * * * * * * * */
+
+    if (this.crossings.length > 2) {
+      // periodicity is normalized based on input frame size.
+      this.periodicity = 1.0 - Math.sqrt(this.periodStdDev / this.inputFrame.length);
+    } else {
+      this.periodicity = 0;
+    }
+
+    this.results.amplitude = this.amplitude;
+    this.results.frequency = this.frequency;
+    this.results.periodicity = this.periodicity;
+
+    return this.results;
+  }
+
+  _mainAlgorithm() {
+
+    // compute min, max, mean and magnitude
+    // this.mean = 0;
+    // this.magnitude = 0;
+
+    let min, max;
+    min = max = this.inputFrame[0];
+
+    for (let i = 0; i &lt; this.inputFrame.length; i++) {
+      let val = this.inputFrame[i];
+
+      // this.mean += val;
+      // this.magnitude += val * val;
+
+      if (val > max)
+        max = val;
+      else if (val &lt; min)
+        min = val;
+    }
+
+    // TODO : more tests to determine which mean (true mean or (max-min)/2) is the best
+    //this.mean /= this.inputFrame.length;
+    this.mean = min + (max - min) * 0.5;
+
+    // this.magnitude /= this.inputFrame.length;
+    // this.magnitude = Math.sqrt(this.magnitude);
+
+    // compute signal stdDev and number of mean-crossings
+    // using ascending AND / OR descending mean crossing (see comments)
+    this.crossings = [];
+    this.upCrossings = [];
+    this.downCrossings = [];
+    this.stdDev = 0;
+
+    let prevDelta = this.inputFrame[0] - this.mean;
+
+    //for (let i in this.inputFrame) {
+    for (let i = 1; i &lt; this.inputFrame.length; i++) {
+      let delta = this.inputFrame[i] - this.mean;
+      this.stdDev += delta * delta;
+
+      if (prevDelta > this.noiseThreshold &amp;&amp; delta &lt; this.noiseThreshold) { // falling
+        // this.crossings.push(i);
+        this.downCrossings.push(i);
+      } else if (prevDelta &lt; this.noiseThreshold &amp;&amp; delta > this.noiseThreshold) { // rising
+        // this.crossings.push(i);
+        this.upCrossings.push(i);
+      }
+
+      this.crossings = (this.upCrossings.length > this.downCrossings.length)
+                     ? this.upCrossings
+                     : this.downCrossings;
+
+      prevDelta = delta;
+    }
+
+    this.stdDev = Math.sqrt(this.stdDev);
+
+    // compute mean of delta-T between crossings
+    this.periodMean = 0;
+    for (let i = 1; i &lt; this.crossings.length; i++) {
+      this.periodMean += this.crossings[i] - this.crossings[i - 1];
+    }
+
+    // if we have a NaN here we don't care as we won't use this.periodMean below
+    this.periodMean /= (this.crossings.length - 1);
+
+    // compute stdDev of delta-T between crossings
+    this.periodStdDev = 0;
+
+    for (let i = 1; i &lt; this.crossings.length; i++) {
+      let deltaP = (this.crossings[i] - this.crossings[i - 1] - this.periodMean)
+      this.periodStdDev += deltaP * deltaP;
+    }
+
+    if (this.crossings.length > 2) {
+      this.periodStdDev = Math.sqrt(this.periodStdDev / (this.crossings.length - 2));
+    }
+  }
+};
 </code></pre>
         </article>
     </section>
@@ -169,14 +374,14 @@ export default MeanCrossingRate;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Intensity.html">Intensity</a></li><li><a href="Kick.html">Kick</a></li><li><a href="MeanCrossingRate.html">MeanCrossingRate</a></li><li><a href="MotionFeatures.html">MotionFeatures</a></li><li><a href="MotionInput.html">MotionInput</a></li><li><a href="Orientation.html">Orientation</a></li><li><a href="Sampler.html">Sampler</a></li><li><a href="StillAutoTrigger.html">StillAutoTrigger</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Intensity.html">Intensity</a></li><li><a href="Kick.html">Kick</a></li><li><a href="MeanCrossingRate.html">MeanCrossingRate</a></li><li><a href="MotionInput.html">MotionInput</a></li><li><a href="Orientation.html">Orientation</a></li><li><a href="Sampler.html">Sampler</a></li><li><a href="StillAutoTrigger.html">StillAutoTrigger</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
     
-        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Mon Oct 02 2017 23:59:11 GMT+0200 (CEST)
+        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Tue Oct 03 2017 17:43:34 GMT+0200 (CEST)
     
 </footer>
 

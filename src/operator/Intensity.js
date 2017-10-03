@@ -26,11 +26,13 @@ const pow = Math.pow;
 /**
  * Compute the intensity of the accelerometers.
  *
- * output: [normIntensity, xIntensity, yIntensity, zIntensity]
+ * input: an array of numbers of size 1 to 3 (`[x]`, `[x, y]` or `[x, y, z]`).
  *
- * @param {Number} [feedback=0.7] - feedback coefficient
- * @param {Number} [gain=0.07] - post gain coefficient
- * @param {Boolean} [boost=false] - compute a noramlized
+ * output: `[normIntensity, xIntensity, yIntensity, zIntensity]`
+ *
+ * @param {Object} [options] - Override default options.
+ * @param {Number} [options.feedback=0.7] - Feedback coefficient.
+ * @param {Number} [options.gain=0.07] - Post gain coefficient.
  */
 class Intensity extends BaseLfo {
   constructor(options = {}) {
@@ -83,8 +85,8 @@ class Intensity extends BaseLfo {
     let norm = 0;
 
     // normalize accelerometers
-    for (let i = 0; i < 3; i++)
-      normAcc[i] = data[i] * inverseGravity;
+    for (let i = 0; i < this.streamParams.frameSize; i++)
+      normAcc[i] = (data[i] || 0) * inverseGravity;
 
     const deltas = this.delta.inputVector(normAcc);
 

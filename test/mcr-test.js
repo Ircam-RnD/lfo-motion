@@ -1,38 +1,143 @@
 import test from 'tape';
-import _MeanCrossingRate from '../src/operator/_MeanCrossingRate';
+import * as lfo from 'waves-lfo/common';
+import * as lfoMotion from '../src/index';
 
+let result = null;
+const sampleRate = 100;
 
 test('mean crossing rate', (t) => {
-  let mcr = new _MeanCrossingRate({ noiseThreshold: 0.05 });
+  const sensors = new lfo.source.EventIn({
+    // frameType: 'vector',
+    // frameSize: 1,
+    // frameRate: 100,
 
-  let crossings;
-  // console.log(JSON.stringify(crossings));
+    frameType: 'signal',
+    frameSize: 1,
+    sampleRate: sampleRate,
 
-  crossings = mcr.processFrame([ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 ]);
-  t.equal(crossings['frequency'], 1);
-  t.equal(crossings['periodicity'], 1);
+    description: [ 'stream of random numbers' ],
+  });
 
-  crossings = mcr.processFrame([ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1 ]);
-  t.equal(crossings['frequency'], 1);
-  t.equal(crossings['periodicity'], 1);
+  const slicer = new lfo.operator.Slicer({
+    frameSize: 256,
+    hopSize: 1,
+    centeredTimeTags: true,
+  })
 
-  crossings = mcr.processFrame([ -1, 1, -1, 1, -1, 1, -1, 1, -1 ]);
-  t.equal(crossings['frequency'], 1);
-  t.equal(crossings['periodicity'], 1);
+  const mcr = new lfoMotion.operator.MeanCrossingRate({
+    noiseThreshold: 0.05,
+    frameSize: 512,
+    hopSize: 256,
+  });
 
-  // crossings = mcr.processFrame([ 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, -1 ]);
+  const mcrBridge = new lfo.sink.Bridge({
+    processFrame: (frame) => {
+      result = frame.data;
+    },
+  });
 
-  crossings = mcr.processFrame([ 1, 0, 0, 0, 0, 0 ]);
-  t.equal(crossings['frequency'], 0.2);
-  t.equal(crossings['periodicity'], 0);
+  //========== Graph creation : ==========//
 
-  /* * * * * WITH SAMPLERATE * * * * */
+  // if we want to feed mcr with vectors :
 
-  mcr = new _MeanCrossingRate({ noiseThreshold: 0.05, sampleRate: 1000 });
+  // sensors.connect(mcr);
+  // mcr.connect(mcrBridge);
 
-  crossings = mcr.processFrame([ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 ]);
-  t.equal(crossings['frequency'], 500);
-  t.equal(crossings['periodicity'], 1);
+  // if we want to feed mcr with signal :
 
-  t.end();
+  sensors.connect(slicer);
+  slicer.connect(mcr);
+  mcr.connect(mcrBridge);
+
+  //============== Testing ==============//
+
+  const setGlobalFrameSize = frameSize => {
+    sensors.params.set('frameSize', frameSize);
+    slicer.params.set('frameSize', frameSize);
+    slicer.params.set('hopSize', frameSize);
+  }
+
+  sensors.init()
+    .then(() => {
+      sensors.start();
+      let nextInput = [];
+
+      //========== with odd length input
+
+      nextInput = [ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 ];
+
+      setGlobalFrameSize(nextInput.length);
+
+      sensors.processFrame({
+        time: null,
+        data: nextInput,
+      });
+
+      t.equal(result[0], 50, 'frequency must be Nyquist');
+      t.equal(result[1], 1, 'periodicity must be maximum');
+
+      //========== with even length input, ascending
+
+      nextInput = [ -1, 1, -1, 1, -1, 1, -1, 1, -1, 1 ];
+
+      setGlobalFrameSize(nextInput.length);
+
+      sensors.processFrame({
+        time: null,
+        data: nextInput,
+      });
+
+      t.equal(result[0], 50, 'frequency must be Nyquist');
+      t.equal(result[1], 1, 'periodicity must be maximum');
+
+      //========== with even length input, descending
+
+      nextInput = [ 1, -1, 1, -1, 1, -1, 1, -1, 1, -1 ];
+
+      setGlobalFrameSize(nextInput.length);
+
+      sensors.processFrame({
+        time: null,
+        data: nextInput,
+      });
+
+      t.equal(result[0], 50, 'frequency must be Nyquist');
+      t.equal(result[1], 1, 'periodicity must be maximum');
+
+      //========== with minimum periodicity (~ impulse)
+
+      nextInput = [ 1, 0, 0, 0, 0, 0 ];
+
+      setGlobalFrameSize(nextInput.length);
+
+      sensors.processFrame({
+        time: null,
+        data: nextInput,
+      });
+
+      const lowestFreq = sampleRate / nextInput.length;
+      const epsilon = 10e-6;
+      const msg = 'frequency must correspond to `sampleRate / nextInput.length`';
+
+      t.equal((result[0] - lowestFreq) < epsilon, true, msg);
+      t.equal(result[1], 0, 'periodicity must be minimum');
+
+      //========== with zero periodicity (varioations below noiseThreshold)
+
+      nextInput = [ 0, 0, 0, 0, 0, 0 ];
+
+      setGlobalFrameSize(nextInput.length);
+
+      sensors.processFrame({
+        time: null,
+        data: nextInput,
+      });
+
+      t.equal(result[0], 0, 'frequency must be zero');
+      t.equal(result[1], 0, 'periodicity must be minimum');
+
+      //========== end tests
+
+      t.end();
+    });
 });

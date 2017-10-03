@@ -43,8 +43,8 @@ const parameters = {
  * device motion specification (left-hand axis). This is done for compatibility
  * with the R-ioT sensor.
  *
- * @param {Object} options - Override default options
- * @param {Number} k - Ratio between the accelerometers and gyroscope.
+ * @param {Object} [options] - Override default options.
+ * @param {Number} [options.k=0.9] - Ratio between the accelerometers and gyroscope.
  *  1 means gyroscope only
  *  0 mean accelerometers only (this is equivalent to a lowpass filter)
  *

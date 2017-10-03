@@ -29,7 +29,7 @@ const parameters = {
  *
  * @todo - add option for output type (i.e. mean, max, min, last, median, etc.)
  *
- * @param {Object} options - override default parameters
+ * @param {Object} [options] - Override default options.
  * @param {Number} [options.frameRate=20] - output sampling rate (in Hz)
  */
 class Sampler extends lfo.BaseLfo {

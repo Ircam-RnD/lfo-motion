@@ -35,10 +35,10 @@
         <h2>StillAutoTrigger</h2>
         
             <div class="class-description"><p>Simple switch control using intensity input to output sparse frames
-of length 1, containing either 1 (start moving) or 0 (stop moving).
+of length 1 (scalars), alternating between 1 (start moving) or 0 (stop moving).
 The detection is based on a schmitt trigger system, and also features
-a timeout duration allowing to go below the low threshold for a certain
-amount of time without sending the 0 value.</p></div>
+a timeout parameter allowing to stay below the low threshold up to a maximum
+duration without sending the 0 value.</p></div>
         
     
 </header>
@@ -52,7 +52,7 @@ amount of time without sending the 0 value.</p></div>
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="StillAutoTrigger"><span class="type-signature"></span>new StillAutoTrigger<span class="signature">(options, onThreshold, offThreshold, offDelay)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="StillAutoTrigger"><span class="type-signature"></span>new StillAutoTrigger<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -79,6 +79,8 @@ amount of time without sending the 0 value.</p></div>
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -104,12 +106,45 @@ amount of time without sending the 0 value.</p></div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last"><p>Override default options.</p></td>
-        </tr>
+            <td class="description last"><p>Override default options.</p>
+                <h6>Properties</h6>
+                
 
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
     
 
         <tr>
@@ -127,10 +162,27 @@ amount of time without sending the 0 value.</p></div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>The threshold above which moving starts.</p></td>
+            
+                <td class="default">
+                
+                    0.5
+                
+                </td>
+            
+
+            <td class="description last"><p>The threshold above which
+moving starts.</p></td>
         </tr>
 
     
@@ -150,10 +202,27 @@ amount of time without sending the 0 value.</p></div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>The threshold below which moving stops.</p></td>
+            
+                <td class="default">
+                
+                    0.01
+                
+                </td>
+            
+
+            <td class="description last"><p>The threshold below which
+moving stops.</p></td>
         </tr>
 
     
@@ -173,10 +242,34 @@ amount of time without sending the 0 value.</p></div>
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>The allowed duration to go below the low threshold without sending .</p></td>
+            
+                <td class="default">
+                
+                    0.2
+                
+                </td>
+            
+
+            <td class="description last"><p>The maximum duration (timeout)
+allowed in seconds to stay below the low threshold without propagating a 0.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -217,7 +310,7 @@ amount of time without sending the 0 value.</p></div>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="operator_StillAutoTrigger.js.html">operator/StillAutoTrigger.js</a>, <a href="operator_StillAutoTrigger.js.html#line36">line 36</a>
+        <a href="operator_StillAutoTrigger.js.html">operator/StillAutoTrigger.js</a>, <a href="operator_StillAutoTrigger.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -273,14 +366,14 @@ amount of time without sending the 0 value.</p></div>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Intensity.html">Intensity</a></li><li><a href="Kick.html">Kick</a></li><li><a href="MeanCrossingRate.html">MeanCrossingRate</a></li><li><a href="MotionFeatures.html">MotionFeatures</a></li><li><a href="MotionInput.html">MotionInput</a></li><li><a href="Orientation.html">Orientation</a></li><li><a href="Sampler.html">Sampler</a></li><li><a href="StillAutoTrigger.html">StillAutoTrigger</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Intensity.html">Intensity</a></li><li><a href="Kick.html">Kick</a></li><li><a href="MeanCrossingRate.html">MeanCrossingRate</a></li><li><a href="MotionInput.html">MotionInput</a></li><li><a href="Orientation.html">Orientation</a></li><li><a href="Sampler.html">Sampler</a></li><li><a href="StillAutoTrigger.html">StillAutoTrigger</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
     
-        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Mon Oct 02 2017 23:59:11 GMT+0200 (CEST)
+        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Tue Oct 03 2017 17:43:34 GMT+0200 (CEST)
     
 </footer>
 

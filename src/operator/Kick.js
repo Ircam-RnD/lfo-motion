@@ -27,17 +27,34 @@ const definitions = {
  * Find a kick from the sensors values. The module must be connected to the
  * output of the `Intensity` operator. The module outputs when a kick is found.
  *
- * @param {Object} [options] - An object containing parameters to initialize.
+ * @param {Object} [options] - Override default options.
  * @param {Number} [options.filterOrder=5] - Buffer size of the internal median filter.
- * @param {Number} [options.threshold=0.01] - The intensity threshold above which to trig a kick.
+ * @param {Number} [options.threshold=0.01] - Delta intensity threshold above which to trig a kick.
  * @param {Number} [options.minInter=0.2] - Minimum interval between successive trigs in seconds.
  *
  * @example
+ * import * as lfo from 'waves-lfo';
  * import * as lfoMotion from 'lfo-motion';
  *
- * const sensors = new lfo.source.MotionInput();
- * const intensity = new lfo.operator.Intensity();
+ * const sensors = new lfoMotion.source.MotionInput();
+ * const intensity = new lfoMotion.operator.Intensity();
+ * const kick = new lfoMotion.operator.Kick();
+ * const kickBridge = new lfo.sink.Bridge({
+ *   processFrame: frame => {
+ *     if (frame[0] === 1)
+ *       // do some cool stuff
+ *       console.log('kick');
+ *   }
+ * });
  *
+ * sensors.connect(intensity);
+ * intensity.connect(kick);
+ * kick.connect(kickBridge);
+ *
+ * sensors.init()
+ *   .then(() => {
+ *     sensors.start();
+ *   });
  */
 class Kick extends BaseLfo {
   constructor(options = {}) {

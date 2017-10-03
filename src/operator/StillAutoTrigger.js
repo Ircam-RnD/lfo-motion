@@ -17,21 +17,24 @@ const parameters = {
     type: 'float',
     min: 0,
     max: +Infinity,
-    default: 200,
+    default: 0.2,
   },
 }
 
 /**
  * Simple switch control using intensity input to output sparse frames
- * of length 1, containing either 1 (start moving) or 0 (stop moving).
+ * of length 1 (scalars), alternating between 1 (start moving) or 0 (stop moving).
  * The detection is based on a schmitt trigger system, and also features
- * a timeout duration allowing to go below the low threshold for a certain
- * amount of time without sending the 0 value.
+ * a timeout parameter allowing to stay below the low threshold up to a maximum
+ * duration without sending the 0 value.
  *
- * @param {Object} options - Override default options.
- * @param {Number} onThreshold - The threshold above which moving starts.
- * @param {Number} offThreshold - The threshold below which moving stops.
- * @param {Number} offDelay - The allowed duration to go below the low threshold without sending .
+ * @param {Object} [options] - Override default options.
+ * @param {Number} [options.onThreshold=0.5] - The threshold above which
+ * moving starts.
+ * @param {Number} [options.offThreshold=0.01] - The threshold below which
+ * moving stops.
+ * @param {Number} [options.offDelay=0.2] - The maximum duration (timeout)
+ * allowed in seconds to stay below the low threshold without propagating a 0.
  */
 class StillAutoTrigger extends BaseLfo {
   constructor(options = {}) {
@@ -70,7 +73,7 @@ class StillAutoTrigger extends BaseLfo {
       this.isMoving = false; // keep this out of the timeout
 
       if (this.timeoutId === null) {
-        this.timeoutId = setTimeout(this._stop, this.params.get('offDelay'), frame.time);
+        this.timeoutId = setTimeout(this._stop, this.params.get('offDelay') * 1000, frame.time);
       }
     }
   }
