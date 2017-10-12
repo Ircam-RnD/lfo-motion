@@ -55,16 +55,11 @@ class Sampler extends lfo.BaseLfo {
     const frameSize = this.streamParams.frameSize;
     let sourceFrameRate = prevStreamParams.frameRate;
 
-    console.log('framesize : ' + frameSize);
-    console.log('sourceframerate : ' + sourceFrameRate);
-
     if (sourceFrameRate <= 0 || !isFinite(sourceFrameRate))
       sourceFrameRate = 10; // arbitrary value hoping that we won't loose data
 
     // max number of source frames to store
     const bufferSize = Math.ceil(sourceFrameRate / frameRate);
-
-    console.log('buffersize : ' + bufferSize);
 
     this.maxBufferIndex = bufferSize;
     this.buffer = new Float32Array(bufferSize * frameSize);
