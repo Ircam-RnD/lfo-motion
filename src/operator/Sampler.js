@@ -11,13 +11,13 @@ if (!Float32Array.prototype.fill) {
 
 const parameters = {
   frameRate: {
-    type: 'integer',
-    min: 0.015,
+    type: 'float',
+    min: 0.001,
     max: +Infinity,
-    default: 0.05,
+    default: 20,
     constant: true,
     metas: {
-      unit: 's',
+      unit: 'Hz',
     },
   },
 };
