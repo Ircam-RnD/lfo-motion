@@ -55,7 +55,7 @@ class Sampler extends lfo.BaseLfo {
     const frameSize = this.streamParams.frameSize;
     let sourceFrameRate = prevStreamParams.frameRate;
 
-    if (sourceFrameRate <= 0)
+    if (sourceFrameRate <= 0 || !isFinite(sourceFrameRate))
       sourceFrameRate = 10; // arbitrary value hoping that we won't loose data
 
     // max number of source frames to store

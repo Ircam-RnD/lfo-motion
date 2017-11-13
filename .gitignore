@@ -3,5 +3,8 @@ Thumbs.db
 
 node_modules
 
+src/operator/XmmDecoder.js
+src/sink/XmmPhraseRecorder.js
+
 package-lock.json
 npm-debug.log

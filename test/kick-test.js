@@ -22,7 +22,8 @@ test('kick', (t) => {
   const kick = new lfoMotion.operator.Kick({
     filterOrder: 5,
     threshold: 0.01,
-    // 200 ms : with a frameRate of 100 Hz, onsets must be spaced by 20 samples
+    // <=> 200 ms.
+    // with a frameRate of 100 Hz, onsets must be spaced by 20 samples
     // or more not to be discarded.
     minInter: 0.2,
   });
