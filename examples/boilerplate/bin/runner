@@ -177,6 +177,7 @@ switch (command) {
    * Watch the file system and transpile from es6 to es5.
    */
   case '--watch':
+    console.log(srcDirectory, distDirectory);
     watchFiles(srcDirectory, distDirectory);
     break;
 

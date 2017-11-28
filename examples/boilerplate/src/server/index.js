@@ -20,6 +20,7 @@ portfinder.basePort = 3000;
 
 portfinder.getPortPromise()
   .then(port => {
+    console.log(port);
     const app = connect();
 
     app.use(serveFavicon('./public/favicon.ico'));

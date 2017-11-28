@@ -47,35 +47,35 @@ socketReceive.connect(multiplier);
 multiplier.connect(phoneMuteDisplay);
 phoneMuteDisplay.connect(phoneDisplay);
 
-/**
- * from R-ioT:
- *
- * 0 - acc x
- * 1 - acc y
- * 2 - acc z
- * 3 - roll
- * 4 - pitch
- * 5 - yaw
- */
+// /**
+//  * from R-ioT:
+//  *
+//  * 0 - acc x
+//  * 1 - acc y
+//  * 2 - acc z
+//  * 3 - roll
+//  * 4 - pitch
+//  * 5 - yaw
+//  */
 
-const riotSocketReceive = new lfo.source.SocketReceive({ port: 5011 });
-riotSocketReceive.processStreamParams({
-  frameType: 'vector',
-  frameSize: 6,
-  frameRate: 0,
-});
+// const riotSocketReceive = new lfo.source.SocketReceive({ port: 5011 });
+// riotSocketReceive.processStreamParams({
+//   frameType: 'vector',
+//   frameSize: 6,
+//   frameRate: 0,
+// });
 
-const riotMuteDisplay = new lfo.operator.Multiplier({ factor: muteDisplayCoefs });
+// const riotMuteDisplay = new lfo.operator.Multiplier({ factor: muteDisplayCoefs });
 
-const riotDisplay = new lfo.sink.BpfDisplay({
-  canvas: '#riot',
-  width: 400,
-  height: 200,
-  duration: 5,
-});
+// const riotDisplay = new lfo.sink.BpfDisplay({
+//   canvas: '#riot',
+//   width: 400,
+//   height: 200,
+//   duration: 5,
+// });
 
-riotSocketReceive.connect(riotMuteDisplay);
-riotMuteDisplay.connect(riotDisplay);
+// riotSocketReceive.connect(riotMuteDisplay);
+// riotMuteDisplay.connect(riotDisplay);
 
 // ---------------------------------------------------------------
 // CONTROLS
