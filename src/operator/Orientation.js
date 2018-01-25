@@ -43,11 +43,27 @@ const parameters = {
  * device motion specification (left-hand axis). This is done for compatibility
  * with the R-ioT sensor.
  *
+ * @memberof operator
+ *
  * @param {Object} [options] - Override default options.
  * @param {Number} [options.k=0.9] - Ratio between the accelerometers and gyroscope.
  *  1 means gyroscope only
  *  0 mean accelerometers only (this is equivalent to a lowpass filter)
  *
+ * @example
+ * import * as lfo from 'waves-lfo';
+ * import * as lfoMotion from 'lfo-motion';
+ *
+ * const motionInput = new lfoMotion.source.MotionInput();
+ * const sampler = new lfoMotion.operator.Sampler({ frameRate: 50 });
+ * const orientation = new lfoMotion.operator.Orientation();
+ * const logger = new lfo.sink.Logger({ data: true });
+ *
+ * motionInput.connect(sampler);
+ * sampler.connect(orientation);
+ * orientation.connect(logger);
+ *
+ * motionInput.init().then(() => motionInput.start())
  */
 class Orientation extends BaseLfo {
   constructor(options) {

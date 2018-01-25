@@ -27,8 +27,9 @@ const pow = Math.pow;
  * Compute the intensity of the accelerometers.
  *
  * input: an array of numbers of size 1 to 3 (`[x]`, `[x, y]` or `[x, y, z]`).
- *
  * output: `[normIntensity, xIntensity, yIntensity, zIntensity]`
+ *
+ * @memberof operator
  *
  * @param {Object} [options] - Override default options.
  * @param {Number} [options.feedback=0.7] - Feedback coefficient.

@@ -28,6 +28,10 @@ const parameters = {
  * a timeout parameter allowing to stay below the low threshold up to a maximum
  * duration without sending the 0 value.
  *
+ * note: this module has no defined output frameRate.
+ *
+ * @memberof operator
+ *
  * @param {Object} [options] - Override default options.
  * @param {Number} [options.onThreshold=0.5] - The threshold above which
  * moving starts.
@@ -50,7 +54,7 @@ class StillAutoTrigger extends BaseLfo {
   processStreamParams(prevStreamParams) {
     this.prepareStreamParams(prevStreamParams);
 
-    this.streamParams.frameRate = undefined;
+    this.streamParams.frameRate = 0; //
     this.streamParams.frameSize = 1;
 
     this.propagateStreamParams();

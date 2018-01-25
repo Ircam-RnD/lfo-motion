@@ -27,6 +27,8 @@ const definitions = {
  * Find a kick from the sensors values. The module must be connected to the
  * output of the `Intensity` operator. The module outputs when a kick is found.
  *
+ * @memberof operator
+ *
  * @param {Object} [options] - Override default options.
  * @param {Number} [options.filterOrder=5] - Buffer size of the internal median filter.
  * @param {Number} [options.threshold=0.01] - Delta intensity threshold above which to trig a kick.
@@ -39,7 +41,7 @@ const definitions = {
  * const sensors = new lfoMotion.source.MotionInput();
  * const intensity = new lfoMotion.operator.Intensity();
  * const kick = new lfoMotion.operator.Kick();
- * const kickBridge = new lfo.sink.Bridge({
+ * const bridge = new lfo.sink.Bridge({
  *   processFrame: frame => {
  *     if (frame[0] === 1)
  *       // do some cool stuff
@@ -49,12 +51,9 @@ const definitions = {
  *
  * sensors.connect(intensity);
  * intensity.connect(kick);
- * kick.connect(kickBridge);
+ * kick.connect(bridge);
  *
- * sensors.init()
- *   .then(() => {
- *     sensors.start();
- *   });
+ * sensors.init().then(() => sensors.start());
  */
 class Kick extends BaseLfo {
   constructor(options = {}) {
@@ -77,10 +76,6 @@ class Kick extends BaseLfo {
         frameSize: 1,
       });
     }
-  }
-
-  resetStream() {
-    super.resetStream();
   }
 
   processStreamParams(prevStreamParams) {
@@ -134,7 +129,7 @@ class Kick extends BaseLfo {
   }
 
   processFrame(frame) {
-    this.prepareStreamParams();
+    this.prepareFrame();
     this.processFunction(frame);
   }
 }

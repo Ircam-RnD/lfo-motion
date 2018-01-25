@@ -23,9 +23,11 @@ const parameters = {
 };
 
 /**
- * Module that resample an incomming vector frame at a given framerate.
+ * Module that naïvely resample an incomming vector frame at a given framerate.
  * If 0 frame has been received since last tick, output last values.
  * If more than 1 frame since last tick, output the mean of all the frames.
+ *
+ * @memberof operator
  *
  * @todo - add option for output type (i.e. mean, max, min, last, median, etc.)
  *

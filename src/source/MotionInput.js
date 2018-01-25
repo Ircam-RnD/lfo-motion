@@ -17,6 +17,8 @@ const definitions = {};
  * * 4 - gyro around X (beta - pitch)
  * * 5 - gyro around Y (gamma - roll)
  *
+ * @memberof source
+ *
  * @example
  * import * as lfo from 'waves-lfo';
  * import * as lfoMotion from 'lfo-motion';

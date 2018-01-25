@@ -33,14 +33,23 @@ const parameters = {
  * output: an array of size `2 * inputDimension`
  * (`[ frequency1, periodicity1, ... frequencyN, periodicityN ]`)
  *
+ * @memberof operator
+ * @deprecated
+ *
+ * @warning: This operator is considered as unstable and will be modified.
+ *  particularly the module will probably be modified to handle only `signal`
+ *  inputs. Leveraging the handling of vector frames to the end-user by making
+ *  use of `lfo.operator.Select` and `lfo.operator.Slicer`
+ *
+ *
  * @param {Object} [options] - Override default options.
  * @param {Number} [options.noiseThreshold=0.1] - Threshold added to the mean to
  *  avoid confusion between noise and real signal.
  * @param {Number} [options.frameSize=512] - Size of the internal sliding window.
- * Will be ignored if input is signal.
- * @param {Number} [options.hopSize=null] - Number of samples between
- * two computations on the internal sliding window. Will be ignored is input is
- * signal.
+ *  Will be ignored if input is signal.
+ * @param {Number} [options.hopSize=null] - Number of samples between two
+ *  computations on the internal sliding window. Will be ignored is input
+ *  is signal.
  */
 
 // We don't use centered time tags for signal input, as we don't know if it's

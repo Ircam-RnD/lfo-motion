@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Documentation - Class: Kick</title>
+    <title>Documentation - Class: MeanCrossingRate</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -20,7 +20,7 @@
 
     <!-- if home page assume a title is already present in README -->
     
-    <h1 class="page-title">Class: Kick</h1>
+    <h1 class="page-title">Class: MeanCrossingRate</h1>
     
 
     
@@ -32,10 +32,15 @@
 
 <header>
     
-        <h2>Kick</h2>
+        <h2>MeanCrossingRate</h2>
         
-            <div class="class-description"><p>Find a kick from the sensors values. The module must be connected to the
-output of the <code>Intensity</code> operator. The module outputs when a kick is found.</p></div>
+            <div class="class-description"><p>Mean Crossing Rate operator : estimates the frequency and periodicity of
+a (n-dimension) signal, either on an input stream of signal frames, or by
+using its own sliding window on an input stream of vectors.</p>
+<p>The mean is estimated on each new analyzed window using the following equation :
+<code>mean = min + (max - min) * 0.5;</code></p>
+<p>output: an array of size <code>2 * inputDimension</code>
+(<code>[ frequency1, periodicity1, ... frequencyN, periodicityN ]</code>)</p></div>
         
     
 </header>
@@ -49,7 +54,7 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
     <h2>Constructor</h2>
     
 
-    <h4 class="name" id="Kick"><span class="type-signature"></span>new Kick<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="MeanCrossingRate"><span class="type-signature"></span>new MeanCrossingRate<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
 
     
 
@@ -146,7 +151,7 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
 
         <tr>
             
-                <td class="name"><code>filterOrder</code></td>
+                <td class="name"><code>noiseThreshold</code></td>
             
 
             <td class="type">
@@ -173,19 +178,20 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
             
                 <td class="default">
                 
-                    5
+                    0.1
                 
                 </td>
             
 
-            <td class="description last"><p>Buffer size of the internal median filter.</p></td>
+            <td class="description last"><p>Threshold added to the mean to
+ avoid confusion between noise and real signal.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>threshold</code></td>
+                <td class="name"><code>frameSize</code></td>
             
 
             <td class="type">
@@ -212,19 +218,20 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
             
                 <td class="default">
                 
-                    0.01
+                    512
                 
                 </td>
             
 
-            <td class="description last"><p>Delta intensity threshold above which to trig a kick.</p></td>
+            <td class="description last"><p>Size of the internal sliding window.
+ Will be ignored if input is signal.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>minInter</code></td>
+                <td class="name"><code>hopSize</code></td>
             
 
             <td class="type">
@@ -251,12 +258,14 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
             
                 <td class="default">
                 
-                    0.2
+                    null
                 
                 </td>
             
 
-            <td class="description last"><p>Minimum interval between successive trigs in seconds.</p></td>
+            <td class="description last"><p>Number of samples between two
+ computations on the internal sliding window. Will be ignored is input
+ is signal.</p></td>
         </tr>
 
     
@@ -292,6 +301,8 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
+    
 
     
 
@@ -304,7 +315,7 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="operator_Kick.js.html">operator/Kick.js</a>, <a href="operator_Kick.js.html#line59">line 59</a>
+        <a href="operator_MeanCrossingRate.js.html">operator/MeanCrossingRate.js</a>, <a href="operator_MeanCrossingRate.js.html#line62">line 62</a>
     </li></ul></dd>
     
 
@@ -327,32 +338,6 @@ output of the <code>Intensity</code> operator. The module outputs when a kick is
 
 
 
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>import * as lfo from 'waves-lfo';
-import * as lfoMotion from 'lfo-motion';
-
-const sensors = new lfoMotion.source.MotionInput();
-const intensity = new lfoMotion.operator.Intensity();
-const kick = new lfoMotion.operator.Kick();
-const kickBridge = new lfo.sink.Bridge({
-  processFrame: frame => {
-    if (frame[0] === 1)
-      // do some cool stuff
-      console.log('kick');
-  }
-});
-
-sensors.connect(intensity);
-intensity.connect(kick);
-kick.connect(kickBridge);
-
-sensors.init()
-  .then(() => {
-    sensors.start();
-  });</code></pre>
 
 
 
@@ -386,14 +371,14 @@ sensors.init()
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Intensity.html">Intensity</a></li><li><a href="Kick.html">Kick</a></li><li><a href="MeanCrossingRate.html">MeanCrossingRate</a></li><li><a href="MotionInput.html">MotionInput</a></li><li><a href="Orientation.html">Orientation</a></li><li><a href="Sampler.html">Sampler</a></li><li><a href="StillAutoTrigger.html">StillAutoTrigger</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="operator.Intensity.html">operator.Intensity</a></li><li><a href="operator.Kick.html">operator.Kick</a></li><li><a href="operator.MeanCrossingRate.html">operator.MeanCrossingRate</a></li><li><a href="operator.Orientation.html">operator.Orientation</a></li><li><a href="operator.Sampler.html">operator.Sampler</a></li><li><a href="operator.StillAutoTrigger.html">operator.StillAutoTrigger</a></li><li><a href="source.MotionInput.html">source.MotionInput</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
     
-        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Nov 13 2017 12:15:58 GMT+0100 (CET)
+        Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Jan 25 2018 16:13:40 GMT+0100 (CET)
     
 </footer>
 
