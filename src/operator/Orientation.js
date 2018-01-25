@@ -51,7 +51,7 @@ const parameters = {
  *  0 mean accelerometers only (this is equivalent to a lowpass filter)
  *
  * @example
- * import * as lfo from 'waves-lfo';
+ * import * as lfo from 'waves-lfo/client';
  * import * as lfoMotion from 'lfo-motion';
  *
  * const motionInput = new lfoMotion.source.MotionInput();
