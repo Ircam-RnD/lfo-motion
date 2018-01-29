@@ -11,8 +11,8 @@ if (!Float32Array.prototype.fill) {
 
 const parameters = {
   frameRate: {
-    type: 'float',
-    min: 0.001,
+    type: 'integer',
+    min: 1,
     max: +Infinity,
     default: 20,
     constant: true,
@@ -49,7 +49,7 @@ class Sampler extends lfo.BaseLfo {
   processStreamParams(prevStreamParams) {
     this.prepareStreamParams(prevStreamParams);
 
-    const frameRate = this.params.get('frameRate'); // period is in ms
+    const frameRate = this.params.get('frameRate'); // period is in Hz
 
     this.streamParams.frameRate = frameRate;
 
@@ -58,7 +58,7 @@ class Sampler extends lfo.BaseLfo {
     let sourceFrameRate = prevStreamParams.frameRate;
 
     if (sourceFrameRate <= 0 || !isFinite(sourceFrameRate))
-      sourceFrameRate = 10; // arbitrary value hoping that we won't loose data
+      sourceFrameRate = 100; // arbitrary value hoping that we won't loose data
 
     // max number of source frames to store
     const bufferSize = Math.ceil(sourceFrameRate / frameRate);
