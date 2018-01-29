@@ -42,7 +42,7 @@ const rawDisplay = new lfo.sink.BpfDisplay({
 
 // resampled display
 const sampler = new Sampler({
-  frameRate: Math.round(sampleRate / 2),
+  frameRate: 46,
 });
 
 const resampledDisplay = new lfo.sink.BpfDisplay({
