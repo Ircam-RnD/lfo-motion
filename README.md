@@ -21,7 +21,7 @@ import * as lfoMotion from 'lfo-motion'
 
 ## Example Use
 
-```
+```js
 import * as lfo from 'waves-lfo/client';
 import * as lfoMotion from 'lfo-motion';
 
