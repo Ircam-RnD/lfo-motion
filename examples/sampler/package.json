@@ -14,6 +14,7 @@
     "postinstall": "npm run bundle"
   },
   "dependencies": {
+    "@ircam/basic-controllers": "^1.0.3",
     "@ircam/ticker": "^1.0.6",
     "babel-runtime": "^6.9.2",
     "waves-lfo": "^1.1.6"

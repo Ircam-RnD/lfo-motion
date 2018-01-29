@@ -4,7 +4,11 @@ html {
 }
 
 body {
-  margin: 0;
+  margin: 20px;
+}
+
+canvas {
+  outline: 1px solid #cdcdcd;
 }
 
 h1 {
