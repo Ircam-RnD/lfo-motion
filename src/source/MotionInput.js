@@ -1,4 +1,4 @@
-import motionInput from 'motion-input';
+import motionInput from '@ircam/motion-input';
 import { BaseLfo, SourceMixin } from 'waves-lfo/core';
 
 const definitions = {};
