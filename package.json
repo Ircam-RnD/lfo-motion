@@ -1,6 +1,6 @@
 {
   "name": "lfo-motion",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "lfo modules dedicated to motion",
   "main": "dist/index.js",
   "license": "BSD-3-Clause",
