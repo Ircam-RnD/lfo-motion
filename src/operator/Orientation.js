@@ -138,10 +138,9 @@ class Orientation extends BaseLfo {
       this.lastTime = time;
 
       // as accEstimate is a normalized vector maybe this could be variable
-      // @todo - no idea what's going on here...
       if (abs(accEstimate[2]) < 0.1) {
         for (let i = 0; i < 3; i++)
-          gyroEstimate[i] = accEstimate[i];
+          gyroEstimate[i] = accVector[i];
       } else {
         // integrate angle from gyro current values and last result
         const rollDelta = gyroVector[0] * dt * toRad;
