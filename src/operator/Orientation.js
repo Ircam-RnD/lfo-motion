@@ -126,8 +126,9 @@ class Orientation extends BaseLfo {
     if (!this.lastTime) {
       this.lastTime = time;
       // initialize corrected orientation with normalized accelerometer data
-      for (let i = 0; i < 3; i++)
+      for (let i = 0; i < 3; i++) {
         accEstimate[i] = accVector[i];
+      }
 
       return;
     } else {
@@ -175,12 +176,12 @@ class Orientation extends BaseLfo {
       if (abs(accEstimate[2]) < 0.1) {
         // use input instead of estimation
         // accVector is already normalized
-        for(let i = 0; i< 3; i++) {
+        for (let i = 0; i< 3; i++) {
           accEstimate[i] = accVector[i];
         }
       }
-
     }
+
     output[0] = accEstimate[0];
     output[1] = accEstimate[1];
     output[2] = accEstimate[2];
