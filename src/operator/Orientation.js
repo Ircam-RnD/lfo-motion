@@ -101,7 +101,6 @@ class Orientation extends BaseLfo {
     const input = frame.data;
     const output = this.frame.data;
     const accEstimate = this.accEstimate;
-    const lastAccEstimate = this.lastAccEstimate;
     const gyroEstimate = this.gyroEstimate;
 
     const k = this.params.get('k');
@@ -137,42 +136,52 @@ class Orientation extends BaseLfo {
 
       this.lastTime = time;
 
-      // as accEstimate is a normalized vector maybe this could be variable
-      // @todo - no idea what's going on here...
-      if (abs(accEstimate[2]) < 0.1) {
-        for (let i = 0; i < 3; i++)
-          gyroEstimate[i] = accEstimate[i];
-      } else {
-        // integrate angle from gyro current values and last result
-        const rollDelta = gyroVector[0] * dt * toRad;
-        const rollAngle = atan2(accEstimate[0], accEstimate[2]) + rollDelta;
+      // integrate angle from gyro current values and last result
+      // get angles between projection of R on ZX/ZY plane and Z axis, based on last accEstimate
 
-        const pitchDelta = gyroVector[1] * dt * toRad;
-        const pitchAngle = atan2(accEstimate[1], accEstimate[2]) + pitchDelta;
+      // gyroVector in deg/s, delta and angle in rad
+      const rollDelta = gyroVector[0] * dt * toRad;
+      const rollAngle = atan2(accEstimate[0], accEstimate[2]) + rollDelta;
 
-        // // calculate projection vector from angleEstimates
-        gyroEstimate[0] = sin(rollAngle);
-        gyroEstimate[0] /= sqrt(1 + pow(cos(rollAngle), 2) * pow(tan(pitchAngle), 2));
+      const pitchDelta = gyroVector[1] * dt * toRad;
+      const pitchAngle = atan2(accEstimate[1], accEstimate[2]) + pitchDelta;
 
-        gyroEstimate[1] = sin(pitchAngle);
-        gyroEstimate[1] /= sqrt(1 + pow(cos(pitchAngle), 2) * pow(tan(rollAngle), 2));
+      // calculate projection vector from angle Estimates
+      gyroEstimate[0] = sin(rollAngle);
+      gyroEstimate[0] /= sqrt(1 + pow(cos(rollAngle), 2) * pow(tan(pitchAngle), 2));
 
-        // estimate sign of RzGyro by looking in what qudrant the angle Axz is,
-        // RzGyro is positive if  Axz in range -90 ..90 => cos(Awz) >= 0
-        const signYaw = cos(rollAngle) >= 0 ? 1 : -1;
+      gyroEstimate[1] = sin(pitchAngle);
+      gyroEstimate[1] /= sqrt(1 + pow(cos(pitchAngle), 2) * pow(tan(rollAngle), 2));
 
-        // estimate yaw since vector is normalized
-        const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
-        gyroEstimate[2] = signYaw * sqrt(max(0, 1 - gyroEstimateSquared));
-      }
+      // estimate sign of RzGyro by looking in what qudrant the angle Axz is,
+      // RzGyro is positive if  Axz in range -90 ..90 => cos(Awz) >= 0
+      const signYaw = cos(rollAngle) >= 0 ? 1 : -1;
+
+      // estimate yaw since vector is normalized
+      const gyroEstimateSquared = pow(gyroEstimate[0], 2) + pow(gyroEstimate[1], 2);
+
+      gyroEstimate[2] = signYaw * sqrt(max(0, 1 - gyroEstimateSquared));
 
       // interpolate between estimated values and raw values
-      for (let i = 0; i < 3; i++)
+      for (let i = 0; i < 3; i++) {
         accEstimate[i] = gyroEstimate[i] * k + accVector[i] * (1 - k);
+      }
 
       normalize(accEstimate);
-    }
 
+      //Rz is too small and because it is used as reference for computing Axz, Ayz
+      //it's error fluctuations will amplify leading to bad results. In this case
+      //skip the gyro data and just use previous estimate
+      if (abs(accEstimate[2]) < 0.1) {
+        // use input instead of estimation
+        // accVector is already normalized
+        for(let i = 0; i< 3; i++) {
+          accEstimate[i] = accVector[i];
+        }
+        outlet(1, "coince");
+      }
+
+    }
     output[0] = accEstimate[0];
     output[1] = accEstimate[1];
     output[2] = accEstimate[2];
