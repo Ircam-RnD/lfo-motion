@@ -169,16 +169,15 @@ class Orientation extends BaseLfo {
 
       normalize(accEstimate);
 
-      //Rz is too small and because it is used as reference for computing Axz, Ayz
-      //it's error fluctuations will amplify leading to bad results. In this case
-      //skip the gyro data and just use previous estimate
+      // Rz is too small and because it is used as reference for computing Axz, Ayz
+      // it's error fluctuations will amplify leading to bad results. In this case
+      // skip the gyro data and just use previous estimate
       if (abs(accEstimate[2]) < 0.1) {
         // use input instead of estimation
         // accVector is already normalized
         for(let i = 0; i< 3; i++) {
           accEstimate[i] = accVector[i];
         }
-        outlet(1, "coince");
       }
 
     }
